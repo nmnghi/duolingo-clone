@@ -8,13 +8,13 @@ export default function Footer() {
         <Button size="lg" variant="ghost" className="transition duration-200 hover:scale-105">
           <Image
             src="/uk.svg"
-            alt="United Kingdom"
+            alt="English"
             height={32}
             width={40}
             className="mr-4 rounded-md"
             style={{ width: "auto" }}
           />
-          United Kingdom
+          English
         </Button>
         <Button size="lg" variant="ghost" className="transition duration-200 hover:scale-105">
           <Image
