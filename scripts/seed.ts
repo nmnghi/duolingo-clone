@@ -1,9 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-
 import * as schema from "../db/schema"
-
 const sql = neon(process.env.DB_URL!);
 
 const db = drizzle(sql, { schema });
@@ -98,22 +96,22 @@ const main = async () => {
 
         await db.insert(schema.challengeOptions).values([
             {
-                challengeId: 1, // Đâu là "trà"?
-                imageSrc: "https://d2pur3iezf4d1j.cloudfront.net/images/6fd84b8a838c43c4a84b44b08b10177e",
+                challengeId: 1, // Đâu là "trà"?    
+                imageSrc: "/images/tea.png",
                 correct: true,
-                text: "coffee",
-                audioSrc: "/coffee.mp3",
-            },
-            {
-                challengeId: 1,
-                imageSrc: "https://d2pur3iezf4d1j.cloudfront.net/images/18a521f1507cb86689faa5b2e8277703",
-                correct: false,
                 text: "tea",
                 audioSrc: "/tea.mp3",
             },
             {
                 challengeId: 1,
-                imageSrc: "https://d2pur3iezf4d1j.cloudfront.net/images/645fa42dcea02c7e2970a1285e321562",
+                imageSrc: "/images/coffee.png",
+                correct: false,
+                text: "coffee",
+                audioSrc: "/coffee.mp3",
+            },
+            {
+                challengeId: 1,
+                imageSrc: "/images/milk.png",
                 correct: false,
                 text: "milk",
                 audioSrc: "/milk.mp3",
