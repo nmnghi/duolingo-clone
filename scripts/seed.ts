@@ -92,6 +92,20 @@ const main = async () => {
                 order: 1,
                 question: 'Đâu là "trà"?',
             },
+            {
+                id: 2,
+                lessonId: 1, //Bài học 1
+                type: "ASSIST",
+                order: 2,
+                question: '"trà"?',
+            },
+            {
+                id: 3,
+                lessonId: 1, //Bài học 1
+                type: "SELECT",
+                order: 3,
+                question: 'Đâu là "sữa"?',
+            },
         ]);
 
         await db.insert(schema.challengeOptions).values([
@@ -100,21 +114,66 @@ const main = async () => {
                 imageSrc: "/images/tea.png",
                 correct: true,
                 text: "tea",
-                audioSrc: "/tea.mp3",
+                audioSrc: "/uk_tea.mp3",
             },
             {
                 challengeId: 1,
                 imageSrc: "/images/coffee.png",
                 correct: false,
                 text: "coffee",
-                audioSrc: "/coffee.mp3",
+                audioSrc: "/uk_coffee.mp3",
             },
             {
                 challengeId: 1,
                 imageSrc: "/images/milk.png",
                 correct: false,
                 text: "milk",
-                audioSrc: "/milk.mp3",
+                audioSrc: "/uk_milk.mp3",
+            },
+        ]);
+
+        await db.insert(schema.challengeOptions).values([
+            {
+                challengeId: 2, // "trà"?    
+                correct: true,
+                text: "tea",
+                audioSrc: "/uk_tea.mp3",
+            },
+            {
+                challengeId: 2,
+                correct: false,
+                text: "coffee",
+                audioSrc: "/uk_coffee.mp3",
+            },
+            {
+                challengeId: 2,
+                correct: false,
+                text: "milk",
+                audioSrc: "/uk_milk.mp3",
+            },
+        ]);
+
+        await db.insert(schema.challengeOptions).values([
+            {
+                challengeId: 3, // Đâu là "sữa"?    
+                imageSrc: "/images/tea.png",
+                correct: false,
+                text: "tea",
+                audioSrc: "/uk_tea.mp3",
+            },
+            {
+                challengeId: 3,
+                imageSrc: "/images/coffee.png",
+                correct: false,
+                text: "coffee",
+                audioSrc: "/uk_coffee.mp3",
+            },
+            {
+                challengeId: 3,
+                imageSrc: "/images/milk.png",
+                correct: true,
+                text: "milk",
+                audioSrc: "/uk_milk.mp3",
             },
         ]);
 
