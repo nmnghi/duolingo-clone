@@ -177,6 +177,30 @@ const main = async () => {
             },
         ]);
 
+        await db.insert(schema.challenges).values([
+            {
+                id: 4,
+                lessonId: 2, //Bài học 2
+                type: "SELECT",
+                order: 1,
+                question: 'Đâu là "trà"?',
+            },
+            {
+                id: 5,
+                lessonId: 2, //Bài học 2
+                type: "ASSIST",
+                order: 2,
+                question: '"trà"?',
+            },
+            {
+                id: 6,
+                lessonId: 2, //Bài học 2
+                type: "SELECT",
+                order: 3,
+                question: 'Đâu là "sữa"?',
+            },
+        ]);
+
         console.log("Seeding finished")
     } catch (error) {
         console.error(error);
