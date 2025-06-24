@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { cache } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "./drizzle";
 import { eq } from "drizzle-orm";
-import { courses, userProgress, units, challengeProgress, lessons } from "./schema";
+import { courses, userProgress, units, challengeProgress, lessons, userSubscription } from "./schema";
 
 export const getUserProgress = cache(async () => {
     const { userId } = await auth();
@@ -189,4 +190,26 @@ export const getLessonPercentage = cache(async () => {
     );
 
     return percentage;
+});
+
+const DAY_IN_MS = 86_400_000;
+export const getUserSubcription = cache(async () => {
+    const { userId } = await auth();
+    if (!userId) return null;
+
+    const data = await db.query.userSubscription.findFirst({
+        where: eq(userSubscription.userId, userId)
+    })
+
+    if (!data) return null;
+
+    const isActive =
+        data.stripePriceId &&
+        data.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
+
+    return {
+        ...data,
+        isActive: !!isActive,
+    };
+
 });
