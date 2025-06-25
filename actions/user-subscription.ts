@@ -3,7 +3,7 @@
 import { stripe } from '@/lib/stripe';
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { absoluteURL } from '@/lib/utils';
-import { getUserSubcription } from '@/db/queries';
+import { getUserSubscription } from '@/db/queries';
 
 const returnUrl = absoluteURL("/shop");
 
@@ -15,7 +15,7 @@ export const createStripeUrl = async () => {
         throw new Error("Unauthorized");
     }
 
-    const userSubscription = await getUserSubcription();
+    const userSubscription = await getUserSubscription();
 
     if (userSubscription && userSubscription.stripeCustomerId) {
         const stripeSession = await stripe.billingPortal.sessions.create({

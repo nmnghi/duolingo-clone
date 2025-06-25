@@ -12,7 +12,7 @@ import { useAudio, useWindowSize, useMount } from "react-use";
 import { reduceHearts } from "@/actions/user-progress";
 import { useHeartsModal } from "@/store/use-hearts-modal";
 import { usePracticeModal } from "@/store/use-practice-modal";
-import { challengeOptions, challenges, lessons } from "@/db/schema"
+import { challengeOptions, challenges, lessons, userSubscription } from "@/db/schema"
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 
 import { Header } from "./header";
@@ -29,8 +29,10 @@ type Props = {
         completed: boolean;
         challengeOptions: (typeof challengeOptions.$inferSelect)[];
     })[];
-    userSubscription: any;
-};
+    userSubscription: typeof userSubscription.$inferSelect & {
+        isActive: boolean;
+} | null;
+};    
 
 export const Quiz = ({
     initialPercentage,
