@@ -47,7 +47,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     challenges: many(challenges),
 }));
 
-export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
+export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST", "MATCH"]);
 
 export const challenges = pgTable("challenges", {
     id: serial("id").primaryKey(),
@@ -77,6 +77,9 @@ export const challengeOptions = pgTable("challenge_options", {
     correct: boolean("correct").notNull(),
     imageSrc: text("image_src"),
     audioSrc: text("audio_src"),
+    // Adding matchId to indicate which options are pairs in a MATCH challenge
+    // Options with the same matchId are considered a matching pair
+    matchId: integer("match_id"),
 });
 
 export const challengeOptionsRelations = relations(challengeOptions, ({ one }) => ({

@@ -107,6 +107,13 @@ const main = async () => {
                 order: 3,
                 question: 'Đâu là "sữa"?',
             },
+            {
+                id: 4,
+                lessonId: 1, //Bài học 1
+                type: "MATCH",
+                order: 4,
+                question: 'Match the words with their meanings',
+            },
         ]);
 
         await db.insert(schema.challengeOptions).values([
@@ -177,24 +184,69 @@ const main = async () => {
                 audioSrc: "/uk_milk.mp3",
             },
         ]);
+        
+        // Add match pairs for the MATCH challenge
+        await db.insert(schema.challengeOptions).values([
+            // Source words (native language)
+            {
+                challengeId: 4,
+                correct: false,
+                text: "trà",
+                matchId: 1,  // Matches with "tea"
+            },
+            {
+                challengeId: 4,
+                correct: false,
+                text: "cà phê",
+                matchId: 2,  // Matches with "coffee"
+            },
+            {
+                challengeId: 4,
+                correct: false,
+                text: "sữa",
+                matchId: 3,  // Matches with "milk"
+            },
+            // Target words (language being learned)
+            {
+                challengeId: 4,
+                correct: true,
+                text: "tea",
+                audioSrc: "/uk_tea.mp3",
+                matchId: 1,  // Matches with "trà"
+            },
+            {
+                challengeId: 4,
+                correct: true,
+                text: "coffee",
+                audioSrc: "/uk_coffee.mp3",
+                matchId: 2,  // Matches with "cà phê"
+            },
+            {
+                challengeId: 4,
+                correct: true,
+                text: "milk",
+                audioSrc: "/uk_milk.mp3",
+                matchId: 3,  // Matches with "sữa"
+            },
+        ]);
 
         await db.insert(schema.challenges).values([
             {
-                id: 4,
+                id: 7,  // Changed from 4 to avoid duplicate ID
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 1,
                 question: 'Đâu là "trà"?',
             },
             {
-                id: 5,
+                id: 8,  // Changed from 5 to avoid duplicate ID
                 lessonId: 2, //Bài học 2
                 type: "ASSIST",
                 order: 2,
                 question: '"trà"?',
             },
             {
-                id: 6,
+                id: 9,  // Changed from 6 to avoid duplicate ID
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 3,

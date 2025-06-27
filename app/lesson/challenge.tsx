@@ -2,6 +2,8 @@ import { challengeOptions, challenges } from "@/db/schema"
 import { cn } from "@/lib/utils";
 
 import {Card} from "./card";
+import { MatchChallenge } from "./match-challenge";
+
 type Props ={
     options: typeof challengeOptions.$inferSelect[];
     onSelect: (id: number) => void;
@@ -19,6 +21,19 @@ export const Challenge =({
     type,
 
 }: Props) =>{
+    if (type === "MATCH") {
+        return (
+            <MatchChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+            />
+        );
+    }
+    
     return (
         <div className={cn(
             "grid gap-2",

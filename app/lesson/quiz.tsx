@@ -54,9 +54,11 @@ export const Quiz = ({
 
     const router = useRouter();
 
-    const [finishAudio, _f, finishControls] = useAudio({ src: "/finish.mp3" });
-    const [correctAudio, _c, correctControls] = useAudio({src: "/correct.wav"});
-    const [incorrectAudio, _i, incorrectControls] = useAudio({src: "/incorrect.wav"});
+    const [finishAudio, _f, finishControls] = useAudio({src: "/finish.mp3",});
+    
+    const [correctAudio, _c, correctControls] = useAudio({src: "/correct.wav",});
+    
+    const [incorrectAudio, _i, incorrectControls] = useAudio({src: "/incorrect.wav", });
 
     const [pending, startTransition] = useTransition();
 
@@ -100,6 +102,55 @@ export const Quiz = ({
             onNext();
             setStatus("none");
             setSelectedOption(undefined);
+            return;
+        }
+
+        // Special handling for MATCH type
+        if (challenge.type === "MATCH") {
+            // For MATCH type, selectedOption === options[0].id means all pairs are matched
+            // and the MatchChallenge component has signaled completion
+            if (selectedOption === options[0].id) {
+                // All pairs are matched - play correct sound and update progress
+                startTransition(() => {
+                    upsertChallengeProgress(challenge.id)
+                    .then((response) => {
+                        if (response?.error === "hearts") {
+                            console.error("Missing hearts");
+                            openHeartsModal();
+                            return;
+                        }
+
+                        correctControls.play();
+                        setStatus("correct");
+                        setPercentage((prev) => prev + 100 / challenges.length);
+
+                        // This is a practice
+                        if (initialPercentage === 100) {
+                            setHearts((prev) => Math.min(prev + 1, 5));
+                        }
+                    })
+                    .catch(() => toast.error("Something went wrong. Please try again"));
+                });
+            } else {
+                // Not all pairs are matched yet - play incorrect sound and reduce hearts
+                startTransition(() => {
+                    reduceHearts(challenge.id)
+                    .then((response) => {
+                        if (response?.error === "hearts") {
+                            openHeartsModal();
+                            return;
+                        }
+
+                        incorrectControls.play();
+                        setStatus("wrong");
+
+                        if (!response?.error) {
+                            setHearts((prev) => Math.max(prev - 1, 0));
+                        }
+                    })
+                    .catch(() => toast.error("Something went wrong. Please try again"));
+                });
+            }
             return;
         }
 
@@ -154,6 +205,14 @@ export const Quiz = ({
             finishControls.play();
         }
     }, [challenge, finishControls]);
+    
+    // This effect will help reset the match challenge when status changes
+    useEffect(() => {
+        if (status === "none" && challenge?.type === "MATCH") {
+            // Reset selectedOption when status changes to none for MATCH challenges
+            setSelectedOption(undefined);
+        }
+    }, [status, challenge?.type]);
 
     if (!challenge) {
         return (
@@ -207,6 +266,8 @@ export const Quiz = ({
 
     const title = challenge.type === "ASSIST"
         ? "Select the correct meaning" 
+        : challenge.type === "MATCH"
+        ? "Match the pairs"
         : challenge.question;
     
     return (
@@ -216,6 +277,7 @@ export const Quiz = ({
                 percentage={percentage}
                 hasActiveSubscription={!!userSubscription?.isActive}
             />
+            {/* Include audio elements in the DOM */}
             {correctAudio}
             {incorrectAudio}
             {finishAudio}
@@ -242,7 +304,7 @@ export const Quiz = ({
                 </div>
             </div>
             <Footer
-                disabled={pending || !selectedOption}
+                disabled={pending || (challenge.type !== "MATCH" && !selectedOption)}
                 status={status}
                 onCheck={onContinue}
             />
