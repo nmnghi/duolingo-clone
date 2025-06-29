@@ -14,6 +14,7 @@ const SidebarData = [
   { label: "Leaderboard", href: "/leaderboard", iconSrc: "/leaderboard.svg" },
   { label: "Quests", href: "/quests", iconSrc: "/quests.svg" },
   { label: "shop", href: "/shop", iconSrc: "/shop.svg" },
+  { label: "Pronounce", href: "/pronounce", iconSrc: "/shop.svg" },
 ];
 
 export default function Sidebar({ className }: Props) {
