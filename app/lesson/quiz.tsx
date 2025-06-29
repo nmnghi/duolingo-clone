@@ -89,6 +89,47 @@ export const Quiz = ({
         setSelectedOption(id);
     };
 
+    // Helper for correct answer logic
+    const handleCorrect = () => {
+        startTransition(() => {
+            upsertChallengeProgress(challenge.id)
+                .then((response) => {
+                    if (response?.error === "hearts") {
+                        console.error("Missing hearts");
+                        openHeartsModal();
+                        return;
+                    }
+                    correctControls.play();
+                    setStatus("correct");
+                    setPercentage((prev) => prev + 100 / challenges.length);
+                    // This is a practice
+                    if (initialPercentage === 100) {
+                        setHearts((prev) => Math.min(prev + 1, 5));
+                    }
+                })
+                .catch(() => toast.error("Something went wrong. Please try again"));
+        });
+    };
+
+    // Helper for incorrect answer logic
+    const handleIncorrect = () => {
+        startTransition(() => {
+            reduceHearts(challenge.id)
+                .then((response) => {
+                    if (response?.error === "hearts") {
+                        openHeartsModal();
+                        return;
+                    }
+                    incorrectControls.play();
+                    setStatus("wrong");
+                    if (!response?.error) {
+                        setHearts((prev) => Math.max(prev - 1, 0));
+                    }
+                })
+                .catch(() => toast.error("Something went wrong. Please try again"));
+        });
+    };
+
     const onContinue = () => {
         if (!selectedOption) return;
 
@@ -105,98 +146,24 @@ export const Quiz = ({
             return;
         }
 
-        // Special handling for MATCH type
-        if (challenge.type === "MATCH") {
-            // For MATCH type, selectedOption === options[0].id means all pairs are matched
-            // and the MatchChallenge component has signaled completion
+        // Special handling for MATCH and AUDIO_TRANSCRIPTION types
+        if (challenge.type === "MATCH" || challenge.type === "AUDIO_TRANSCRIPTION") {
+            // For these types, selectedOption === options[0].id means correct/completed
             if (selectedOption === options[0].id) {
-                // All pairs are matched - play correct sound and update progress
-                startTransition(() => {
-                    upsertChallengeProgress(challenge.id)
-                    .then((response) => {
-                        if (response?.error === "hearts") {
-                            console.error("Missing hearts");
-                            openHeartsModal();
-                            return;
-                        }
-
-                        correctControls.play();
-                        setStatus("correct");
-                        setPercentage((prev) => prev + 100 / challenges.length);
-
-                        // This is a practice
-                        if (initialPercentage === 100) {
-                            setHearts((prev) => Math.min(prev + 1, 5));
-                        }
-                    })
-                    .catch(() => toast.error("Something went wrong. Please try again"));
-                });
+                handleCorrect();
             } else {
-                // Not all pairs are matched yet - play incorrect sound and reduce hearts
-                startTransition(() => {
-                    reduceHearts(challenge.id)
-                    .then((response) => {
-                        if (response?.error === "hearts") {
-                            openHeartsModal();
-                            return;
-                        }
-
-                        incorrectControls.play();
-                        setStatus("wrong");
-
-                        if (!response?.error) {
-                            setHearts((prev) => Math.max(prev - 1, 0));
-                        }
-                    })
-                    .catch(() => toast.error("Something went wrong. Please try again"));
-                });
+                handleIncorrect();
             }
             return;
         }
 
         const correctOption = options.find((option) => option.correct);
-
         if (!correctOption) return;
 
         if (correctOption.id === selectedOption) {
-            startTransition(() => {
-                upsertChallengeProgress(challenge.id)
-                .then((response) => {
-                    if (response?.error === "hearts") {
-                        console.error("Missing hearts")
-                        openHeartsModal();
-                        return;
-                    }
-
-                    correctControls.play();
-                    setStatus("correct");
-                    setPercentage((prev) => prev + 100 / challenges.length);
-
-                    // This is a practise
-                    if (initialPercentage === 100) {
-                        setHearts((prev) => Math.min(prev + 1, 5));
-                    }
-                })
-                .catch(() => toast.error("Something went wrong. Please try again"));
-            });
+            handleCorrect();
         } else {
-            startTransition(() => {
-                reduceHearts(challenge.id)
-                .then((response) => {
-                    if (response?.error === "hearts") {
-                        openHeartsModal();
-                        return;
-                    }
-
-                    incorrectControls.play();
-                    setStatus("wrong");
-
-                    if (!response?.error) {
-                        setHearts((prev) => Math.max(prev - 1, 0));
-                    }
-                })
-                .catch(() => toast.error("Something went wrong. Please try again"));
-            });
+            handleIncorrect();
         }
     };
 
@@ -265,9 +232,11 @@ export const Quiz = ({
     }
 
     const title = challenge.type === "ASSIST"
-        ? "Select the correct meaning" 
+        ? "Chọn đáp án đúng nhất" 
         : challenge.type === "MATCH"
-        ? "Match the pairs"
+        ? "Ghép từ với nghĩa của nó"
+        : challenge.type === "AUDIO_TRANSCRIPTION"
+        ? "Viết những gì bạn nghe"
         : challenge.question;
     
     return (
@@ -303,8 +272,8 @@ export const Quiz = ({
                     </div>
                 </div>
             </div>
-            <Footer
-                disabled={pending || (challenge.type !== "MATCH" && !selectedOption)}
+             <Footer
+                disabled={pending || !selectedOption}
                 status={status}
                 onCheck={onContinue}
             />

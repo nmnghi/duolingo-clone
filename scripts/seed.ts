@@ -112,7 +112,14 @@ const main = async () => {
                 lessonId: 1, //Bài học 1
                 type: "MATCH",
                 order: 4,
-                question: 'Match the words with their meanings',
+                question: 'Ghép từ với nghĩa của nó',
+            },
+            {
+                id: 5,
+                lessonId: 1, //Bài học 1
+                type: "AUDIO_TRANSCRIPTION",
+                order: 5,
+                question: 'Viết những gì bạn nghe',
             },
         ]);
 
@@ -229,24 +236,60 @@ const main = async () => {
                 matchId: 3,  // Matches with "sữa"
             },
         ]);
+        
+        await db.insert(schema.challengeOptions).values([
+            {
+                challengeId: 5,
+                correct: true,
+                text: "I",
+                audioSrc: "/i_love_coffee.mp3",
+            },
+            {
+                challengeId: 5,
+                correct: true,
+                text: "love",
+                audioSrc: "/i_love_coffee.mp3", 
+            },
+            {
+                challengeId: 5,
+                correct: true,
+                text: "coffee",
+                audioSrc: "/i_love_coffee.mp3",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "like",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "tea",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "drinking",
+            },
+        ]);
 
         await db.insert(schema.challenges).values([
             {
-                id: 7,  // Changed from 4 to avoid duplicate ID
+                id: 7,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 1,
                 question: 'Đâu là "trà"?',
             },
             {
-                id: 8,  // Changed from 5 to avoid duplicate ID
+                id: 8,
                 lessonId: 2, //Bài học 2
                 type: "ASSIST",
                 order: 2,
                 question: '"trà"?',
             },
             {
-                id: 9,  // Changed from 6 to avoid duplicate ID
+                id: 9,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 3,

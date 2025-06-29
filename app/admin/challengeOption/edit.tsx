@@ -2,6 +2,7 @@ import {
   BooleanInput,
   Edit,
   ReferenceInput,
+  NumberInput,
   required,
   SimpleForm,
   TextInput,
@@ -13,6 +14,7 @@ export const ChallengeOptionEdit = () => {
       <SimpleForm>
         <TextInput source="text" validate={[required()]} label="Text" />
         <BooleanInput source="correct" label="Correct Option" />
+        <NumberInput source="matchId" label="Match ID" />
         <ReferenceInput source="challengeId" reference="challenges" />
         <TextInput source="imageSrc" label="Image URL" />
         <TextInput source="audioSrc" label="Audio URL" />

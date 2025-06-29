@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 
 import {Card} from "./card";
 import { MatchChallenge } from "./match-challenge";
+import { AudioTranscriptionChallenge } from "./audio-transcription-challenge";
 
 type Props ={
     options: typeof challengeOptions.$inferSelect[];
@@ -24,6 +25,19 @@ export const Challenge =({
     if (type === "MATCH") {
         return (
             <MatchChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+            />
+        );
+    }
+    
+    if (type === "AUDIO_TRANSCRIPTION") {
+        return (
+            <AudioTranscriptionChallenge
                 options={options}
                 onSelect={onSelect}
                 status={status}
