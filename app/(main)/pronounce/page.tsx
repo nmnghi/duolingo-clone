@@ -1,5 +1,8 @@
 'use client'
-import Image from "next/image";
+// import Image from "next/image";
+import { Noto_Sans } from "next/font/google";
+
+const notoSans = Noto_Sans({ subsets: ["latin"], weight: ["400"] });
 
 const vowels = [
     { symbol: 'iː', word: 'sheep', audio: 'i dài' },
@@ -19,7 +22,7 @@ const vowels = [
     { symbol: 'ʌ', word: 'but', audio: 'ʌ' },
     { symbol: 'ɑ:', word: 'far', audio: 'ɑ dai' },
     { symbol: 'ɒ', word: 'on', audio: 'ɒ' },
-    { symbol: 'eə', word: 'cow', audio: 'eə' },
+    { symbol: 'eə', word: 'pair', audio: 'eə' },
     { symbol: 'aɪ', word: 'my', audio: 'aɪ' },
     { symbol: 'aʊ', word: 'cow', audio: 'aʊ' },
 ];
@@ -66,7 +69,7 @@ const PronouncePage = () => {
             setTimeout(() => {
                 const speech = new SpeechSynthesisUtterance(el);
                 window.speechSynthesis.speak(speech);
-            }, 750)
+            }, 650)
         }
 
 
@@ -74,49 +77,54 @@ const PronouncePage = () => {
 
     return (
         <div className="h-full max-w-[912px] px-3 mx-auto py-8">
-            <h1 className="text-2xl font-bold text-neutral-700 mb-6">Nguyên âm</h1>
+            <div className="flex items-center gap-4 my-6">
+                <div className="flex-1 border-t border-gray-300 border-[2px]"></div>
+                <h1 className="text-2xl font-bold text-neutral-700 whitespace-nowrap">Nguyên âm</h1>
+                <div className="flex-1 border-t border-gray-300 border-[2px]"></div>
+            </div>
+
             <div className="grid grid-cols-4 gap-4">
                 {vowels.map((vowel, index) => (
-                    <div
-                        key={index}
-                        className="bg-gray-900 text-white p-4 rounded-lg flex flex-col justify-center text-center"
-                    >
-                        <button className="flex justify-start w-5" onClick={() => onClick(vowel.word, index, 'vowel')}>
-                            <Image
-                                className="invert"
-                                src="volume.svg"
-                                alt="volume"
-                                height={20}
-                                width={20}
-                            />
+                    <button key={index} className="" onClick={() => onClick(vowel.word, index, 'vowel')}>
+                        <div
+                            // key={index}
+                            // className="bg-gray-900 text-white p-4 rounded-3xl flex flex-col justify-center text-center border-gray-400 border-solid border-[4px] border-b-[6px]"
+                            className="bg-white-900 text-black p-4 rounded-3xl flex flex-col justify-center text-center border-e5e5e5-400 border-solid border-[4px] border-b-[6px] transition duration-150 ease-in-out active:bg-gray-200"
+                        >
                             <audio id={`audioPlayer-vowel-${index}`} src={`/audio/${vowel.audio}.mp3`}></audio>
-                        </button>
-                        <span className="text-3xl font-bold">{vowel.symbol}</span>
-                        <span className="text-sm mt-1">{vowel.word}</span>
-                    </div>
+                            {/* <span className="text-3xl font-light">{vowel.symbol}</span> */}
+                            <span className={`${notoSans.className} text-3xl`}>
+                                {vowel.symbol}
+                            </span>
+                            <span className="text-gray-500 font-[cursive] text-base mt-1">{vowel.word}</span>
+                            <span className="mt-1 border-[4px] border-gray-300 rounded-2xl w-4 mx-auto"></span>
+                        </div>
+                    </button>
                 ))}
             </div>
 
-            <h1 className="text-2xl font-bold text-neutral-700 mb-6 pt-6">Phụ âm</h1>
+            <div className="flex items-center gap-4 my-6">
+                <div className="flex-1 border-t border-gray-300 border-[2px]"></div>
+                <h1 className="text-2xl font-bold text-neutral-700 whitespace-nowrap">Phụ âm</h1>
+                <div className="flex-1 border-t border-gray-300 border-[2px]"></div>
+            </div>
             <div className="grid grid-cols-4 gap-4 pb-5">
                 {consonants.map((consonant, index) => (
-                    <div
-                        key={index}
-                        className="bg-gray-900 text-white p-4 rounded-lg flex flex-col justify-center text-center"
-                    >
-                        <button className="flex justify-start w-5" onClick={() => onClick(consonant.word, index, 'consonant')}>
-                            <Image
-                                className="invert"
-                                src="volume.svg"
-                                alt="volume"
-                                height={20}
-                                width={20}
-                            />
+                    <button key={index} className="" onClick={() => onClick(consonant.word, index, 'consonant')}>
+                        <div
+                            // key={index}
+                            // className="bg-gray-900 text-white p-4 rounded-3xl flex flex-col justify-center text-center border-gray-400 border-solid border-[4px] border-b-[6px]"
+                            className="bg-white-900 text-black p-4 rounded-3xl flex flex-col justify-center text-center border-e5e5e5-400 border-solid border-[4px] border-b-[6px] transition duration-150 ease-in-out active:bg-gray-200"
+                        >
                             <audio id={`audioPlayer-consonant-${index}`} src={`/audio/${consonant.audio}.mp3`}></audio>
-                        </button>
-                        <span className="text-3xl font-bold">{consonant.symbol}</span>
-                        <span className="text-sm mt-1">{consonant.word}</span>
-                    </div>
+                            {/* <span className="text-3xl font-light">{vowel.symbol}</span> */}
+                            <span className={`${notoSans.className} text-3xl`}>
+                                {consonant.symbol}
+                            </span>
+                            <span className="text-gray-500 font-[cursive] text-base mt-1">{consonant.word}</span>
+                            <span className="mt-1 border-[4px] border-gray-300 rounded-2xl w-4 mx-auto"></span>
+                        </div>
+                    </button>
                 ))}
             </div>
         </div>

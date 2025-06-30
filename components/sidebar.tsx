@@ -11,10 +11,10 @@ type Props = {
 
 const SidebarData = [
   { label: "Learn", href: "/learn", iconSrc: "/learn.svg" },
+  { label: "Pronounce", href: "/pronounce", iconSrc: "/images/mouth.png" },
   { label: "Leaderboard", href: "/leaderboard", iconSrc: "/leaderboard.svg" },
   { label: "Quests", href: "/quests", iconSrc: "/quests.svg" },
   { label: "shop", href: "/shop", iconSrc: "/shop.svg" },
-  { label: "Pronounce", href: "/pronounce", iconSrc: "/shop.svg" },
 ];
 
 export default function Sidebar({ className }: Props) {
