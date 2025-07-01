@@ -29,6 +29,11 @@ const LessonIdPage = async ({
         redirect("/learn");
     }
 
+    if (!lesson.challenges || lesson.challenges.length === 0) {
+    // Optional: hiện popup hoặc redirect
+    redirect("/learn"); // hoặc throw new Error("Bài học chưa được cấu hình");
+    }
+
     const initialPercentage = lesson.challenges
         .filter((challenge) => challenge.completed)
         .length / lesson.challenges.length * 100;

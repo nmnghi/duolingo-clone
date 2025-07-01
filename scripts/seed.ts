@@ -49,7 +49,15 @@ const main = async () => {
                 title: "Phần 1",
                 description: "Mời khách xơi nước",
                 order: 1,
-            }
+            },
+            {
+                id: 2,
+                courseId: 1, // English
+                title: "Phần 2",
+                description: "Giới thiệu gốc gác",
+                order: 2,
+            },
+            
         ])
 
         await db.insert(schema.lessons).values([
@@ -80,6 +88,42 @@ const main = async () => {
             {
                 id: 5,
                 unitId: 1, // Phần 1 (Mời khách xơi nước)
+                order: 5,
+                title: "Cửa 5",
+            },
+            {
+                id: 6,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
+                order: 0,
+                title: "Cửa 0",
+            },
+            {
+                id: 7,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
+                order: 1,
+                title: "Cửa 1",
+            },
+            {
+                id: 8,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
+                order: 2,
+                title: "Cửa 2",
+            },
+            {
+                id: 9,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
+                order: 3,
+                title: "Cửa 3",
+            },
+            {
+                id: 10,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
+                order: 4,
+                title: "Cửa 4",
+            },
+            {
+                id: 11,
+                unitId: 2, // Phần 2 (Giới thiệu gốc gác)
                 order: 5,
                 title: "Cửa 5",
             }

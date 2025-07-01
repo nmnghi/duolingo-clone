@@ -30,6 +30,7 @@ export const Unit = ({
             <UnitBanner title={title} description={description} />
             <div className="relative flex flex-col items-center">
                 {lessons.map((lesson, index) => {
+                const isSkip = lesson.order === 0;
                 const isCurrent = lesson.id === activeLesson?.id;
                 const isLocked = !lesson.completed && !isCurrent;
 
@@ -42,6 +43,7 @@ export const Unit = ({
                     current={isCurrent}
                     locked={isLocked}
                     percentage={activeLessonPercentage}
+                    skip={isSkip}
                     />
                 );
                 })}
