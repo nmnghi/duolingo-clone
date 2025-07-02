@@ -9,45 +9,65 @@ type Props = {
   description: string;
   lessons: (typeof lessons.$inferSelect & {
     completed: boolean;
+    skip: boolean;
   })[];
   activeLesson: typeof lessons.$inferSelect & {
-        unit: typeof units.$inferSelect;
-    } | undefined;
+    unit: typeof units.$inferSelect;
+  } | undefined;
   activeLessonPercentage: number;
 };
 
 export const Unit = ({
-    id,
-    order,
-    title,
-    description,
-    lessons,
-    activeLesson,
-    activeLessonPercentage,
+  id,
+  order,
+  title,
+  description,
+  lessons,
+  activeLesson,
+  activeLessonPercentage,
 }: Props) => {
-    return (
-        <>
-            <UnitBanner title={title} description={description} />
-            <div className="relative flex flex-col items-center">
-                {lessons.map((lesson, index) => {
-                const isSkip = lesson.order === 0;
-                const isCurrent = lesson.id === activeLesson?.id;
-                const isLocked = !lesson.completed && !isCurrent;
+    
+  const skipLesson = lessons.find((lesson) => lesson.skip);
+  const normalLessons = lessons.filter((lesson) => !lesson.skip);
+  const totalCount = normalLessons.length - 1;
 
-                return (
-                    <LessonButton
-                    key={lesson.id}
-                    id={lesson.id}
-                    index={index}
-                    totalCount={lessons.length - 1}
-                    current={isCurrent}
-                    locked={isLocked}
-                    percentage={activeLessonPercentage}
-                    skip={isSkip}
-                    />
-                );
-                })}
-            </div>
-        </>
-    );
-}
+  return (
+    <>
+      <UnitBanner title={title} description={description} />
+      <div className="relative flex flex-col items-center">
+        {/* skip */}
+        {skipLesson && (
+          <LessonButton
+            key={skipLesson.id}
+            id={skipLesson.id}
+            index={-1} // không ảnh hưởng đến logic thứ tự
+            totalCount={totalCount}
+            current={false}
+            locked={false}
+            skip={true}
+            percentage={activeLessonPercentage} //ĐỂ XEM SAU VÌ KHI OUT THÌ SET LẠI 0% CHỨ KHÔNG LƯU PROGRESS
+          />
+        )}
+
+        {/* bài học bình thường */}
+        {normalLessons.map((lesson, index) => {
+          const isCurrent = lesson.id === activeLesson?.id;
+          const isLocked = !lesson.completed && !isCurrent;
+
+          return (
+            <LessonButton
+              key={lesson.id}
+              id={lesson.id}
+              index={index}
+              totalCount={totalCount}
+              current={isCurrent}
+              locked={isLocked}
+              skip={false}
+              percentage={activeLessonPercentage}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
+};

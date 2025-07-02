@@ -10,9 +10,9 @@ type Props = {
 };
 
 const LessonIdPage = async ({
-    params,
+    params
 } : Props) => {
-    const lessonData = getLesson(params.lessonId);
+    const lessonData = await getLesson(params.lessonId);
     const userProgressData = getUserProgress();
     const userSubscriptionData = getUserSubscription(); // Assuming user subscription is not needed for this page
     const [
@@ -46,6 +46,7 @@ const LessonIdPage = async ({
             initialHearts={userProgress.hearts}
             initialPercentage={initialPercentage}
             userSubscription={userSubscription}
+            skip={lesson.skip}
         />
     );
 }

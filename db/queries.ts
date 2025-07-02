@@ -22,7 +22,8 @@ export const getUserProgress = cache(async () => {
     return data;
 })
 
-export const getUnits = cache(async () => {
+export const getUnits = cache(async () => { //trả về các unit thuộc khóa học hiện tại (activeCourse) mà user đang học.
+
     const { userId } = await auth();
     const userProgress = await getUserProgress();
 
@@ -55,31 +56,134 @@ export const getUnits = cache(async () => {
     const normalizedData = data.map((unit) => {
         const lessonWithCompletedStatus = unit.lessons.map((lesson) => {
 
-            if (
-                lesson.challenges.length === 0
-            ) {
+            if (lesson.skip || lesson.challenges.length === 0) {
                 return { ...lesson, completed: false };
             }
 
             const allCompletedChallenges = lesson.challenges.every((challenge) => {
                 return challenge.challengeProgress &&
-                    challenge.challengeProgress.length > 0 &&
-                    challenge.challengeProgress.every((progress) => progress.completed)
+                challenge.challengeProgress.length > 0 &&
+                challenge.challengeProgress.every((progress) => progress.completed)
             })
             return { ...lesson, completed: allCompletedChallenges };
         })
         return { ...unit, lessons: lessonWithCompletedStatus };
     })
     return normalizedData;
+// [
+//   {
+//     id: 1,
+//     courseId: 1,
+//     order: 1,
+//     title: "Phần 1",
+//     description: "Mời khách xơi nước",
+//     lessons: [
+//       {
+//         id: 1,
+//         unitId: 1,
+//         order: 1,
+//         title: "Cửa 1",
+//         skip: false,
+//         completed: true,
+//         challenges: [
+//           {
+//             id: 1,
+//             lessonId: 1,
+//             order: 1,
+//             type: "SELECT",
+//             question: 'Đâu là "trà"?',
+//             challengeProgress: [
+//               {
+//                 userId: "user_123",
+//                 challengeId: 1,
+//                 completed: true
+//               }
+//             ]
+//           },
+//           {
+//             id: 2,
+//             lessonId: 1,
+//             order: 2,
+//             type: "ASSIST",
+//             question: '"trà"?',
+//             challengeProgress: [
+//               {
+//                 userId: "user_123",
+//                 challengeId: 2,
+//                 completed: true
+//               }
+//             ]
+//           }
+//         ]
+//       },
+//       {
+//         id: 2,
+//         unitId: 1,
+//         order: 2,
+//         title: "Cửa 2",
+//         skip: false,
+//         completed: false,
+//         challenges: [
+//           {
+//             id: 3,
+//             lessonId: 2,
+//             order: 1,
+//             type: "SELECT",
+//             question: 'Đâu là "sữa"?',
+//             challengeProgress: [] // user chưa làm gì
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   {
+//     id: 2,
+//     courseId: 1,
+//     order: 2,
+//     title: "Phần 2",
+//     description: "Giới thiệu gốc gác",
+//     lessons: [
+//       {
+//         id: 6,
+//         unitId: 2,
+//         order: 0,
+//         title: "Cửa 0",
+//         skip: true,
+//         completed: false,
+//         challenges: []
+//       },
+//       {
+//         id: 7,
+//         unitId: 2,
+//         order: 1,
+//         title: "Cửa 1",
+//         skip: false,
+//         completed: false,
+//         challenges: [
+//           {
+//             id: 10,
+//             lessonId: 7,
+//             order: 1,
+//             type: "SELECT",
+//             question: "Đâu là 'gốc gác'?",
+//             challengeProgress: []
+//           }
+//         ]
+//       }
+//     ]
+//   }
+// ]
+
+
 })
 
-export const getCourses = cache(async () => {
+export const getCourses = cache(async () => { 
     const data = await db.query.courses.findMany();
 
     return data;
 });
 
-export const getCourseById = cache(async (courseId: number) => {
+export const getCourseById = cache(async (courseId: number) => { //lấy thông tin 1 khoá cụ thể dựa trên id
     const data = await db.query.courses.findFirst({
         where: eq(courses.id, courseId),
         with: {
@@ -95,9 +199,24 @@ export const getCourseById = cache(async (courseId: number) => {
         },
     });
     return data;
+    // {
+    //     id: 1,
+    //     title: "English",
+    //     units: [
+    //         {
+    //         id: 1,
+    //         title: "Phần 1",
+    //         lessons: [
+    //             { id: 1, title: "Cửa 1", skip: false },
+    //             { id: 2, title: "Cửa 2", skip: true }
+    //         ]
+    //         },
+    //         ...
+    //     ]
+    // }
 });
 
-export const getCourseProgress = cache(async () => {
+export const getCourseProgress = cache(async () => { // tìm bài học đầu tiên mà người dùng chưa hoàn thành, bỏ qua các bài skip.
     const { userId } = await auth();
     const userProgress = await getUserProgress();
 
@@ -128,6 +247,8 @@ export const getCourseProgress = cache(async () => {
     const firstUncompletedLesson = unitsInActiveCourse
         .flatMap((unit) => unit.lessons)
         .find((lesson) => {
+            if (lesson.skip) return false;
+
             // TODO: if sth does not work, check the last if clause
             return lesson.challenges.some((challenge) => {
                 return !challenge.challengeProgress
@@ -140,9 +261,41 @@ export const getCourseProgress = cache(async () => {
         activeLesson: firstUncompletedLesson,
         activeLessonId: firstUncompletedLesson?.id
     };
+
+    // {
+    //     activeLesson: {
+    //         id: 7,
+    //         title: "Cửa 1",
+    //         order: 1,
+    //         skip: false,
+    //         unitId: 2,
+    //         challenges: [
+    //         {
+    //             id: 21,
+    //             type: "SELECT",
+    //             order: 1,
+    //             question: "Chọn từ đúng",
+    //             challengeProgress: [
+    //             { userId: "user_123", completed: true }
+    //             ]
+    //         },
+    //         {
+    //             id: 22,
+    //             type: "ASSIST",
+    //             order: 2,
+    //             question: "Gõ lại từ",
+    //             challengeProgress: [
+    //             { userId: "user_123", completed: false } // chưa hoàn thành
+    //             ]
+    //         }
+    //         ]
+    //     },
+    //     activeLessonId: 7
+    // }
+
 });
 
-export const getLesson = cache(async (id?: number) => {
+export const getLesson = cache(async (id?: number) => { //lấy ra lesson dựa trên id
     const { userId } = await await auth();
 
     if (!userId) {
@@ -185,6 +338,43 @@ export const getLesson = cache(async (id?: number) => {
     });
 
     return { ...data, challenges: normalizedChallenges }
+
+    // {
+    //     id: 7,
+    //     title: "Cửa 1",
+    //     order: 1,
+    //     skip: false,
+    //     unitId: 2,
+    //     challenges: [
+    //         {
+        //         id: 21,
+        //         type: "SELECT",
+        //         order: 1,
+        //         question: "Chọn từ đúng",
+        //         challengeOptions: [...],
+        //         challengeProgress: [
+        //             {
+        //             userId: "user_123",
+        //             challengeId: 21,
+        //             completed: true
+        //             }
+        //         ],
+        //         completed: true
+    //         },
+    //         {
+        //         id: 22,
+        //         type: "ASSIST",
+        //         order: 2,
+        //         question: '"trà"?',
+        //         challengeOptions: [
+        //             ...
+        //         ],
+        //         challengeProgress: [],
+        //         completed: false
+    //         }
+    //     ]
+    // }
+
 });
 
 export const getLessonPercentage = cache(async () => {
