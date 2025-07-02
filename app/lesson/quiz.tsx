@@ -35,8 +35,8 @@ type Props = {
 };    
 
 export const Quiz = ({
-    initialPercentage,
     initialHearts,
+    initialPercentage,
     initialLessonId,
     initialLessonChallenges,
     userSubscription,
@@ -67,8 +67,8 @@ export const Quiz = ({
     });
     const [challenges] = useState(initialLessonChallenges);
     const [activeIndex, setActiveIndex]= useState(() => {
-    const uncompletedIndex = challenges.findIndex((challenge)=> ! challenge.completed);
-        return uncompletedIndex === -1 ? 0 : uncompletedIndex;
+        const uncompletedIndex = challenges.findIndex((challenge)=> ! challenge.completed);
+            return uncompletedIndex === -1 ? 0 : uncompletedIndex;
     });
 
     const [selectedOption, setSelectedOption] = useState<number>();

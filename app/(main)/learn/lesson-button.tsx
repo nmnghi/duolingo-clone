@@ -55,7 +55,7 @@ export const LessonButton = ({
 
   // Điều hướng đến bài học, hoặc ngăn nếu đang locked
   const href = `/lesson/${id}`;
-  const disabled = !skip && locked;
+  const disabled = !skip && locked; // bài skip luôn được mở
 
   const renderProgressButton = (label: string) => (
     <div className="relative h-[102px] w-[102px]">

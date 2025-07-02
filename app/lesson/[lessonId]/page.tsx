@@ -30,8 +30,7 @@ const LessonIdPage = async ({
     }
 
     if (!lesson.challenges || lesson.challenges.length === 0) {
-    // Optional: hiện popup hoặc redirect
-    redirect("/learn"); // hoặc throw new Error("Bài học chưa được cấu hình");
+        redirect("/learn");
     }
 
     const initialPercentage = lesson.challenges
@@ -40,13 +39,11 @@ const LessonIdPage = async ({
 
     return (
         <Quiz
-            
-            initialLessonId={lesson.id}
-            initialLessonChallenges={lesson.challenges}
             initialHearts={userProgress.hearts}
             initialPercentage={initialPercentage}
+            initialLessonId={lesson.id}
+            initialLessonChallenges={lesson.challenges}
             userSubscription={userSubscription}
-            skip={lesson.skip}
         />
     );
 }

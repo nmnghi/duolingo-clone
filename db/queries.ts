@@ -20,6 +20,18 @@ export const getUserProgress = cache(async () => {
         },
     });
     return data;
+    // {
+    //     id: 1,
+    //     userId: "user_abc123",
+    //     hearts: 2,
+    //     points: 150,
+    //     activeCourseId: 3,
+    //     activeCourse: {
+    //         id: 3,
+    //         title: "English A1",
+    //     }
+    // }
+
 })
 
 export const getUnits = cache(async () => { //trả về các unit thuộc khóa học hiện tại (activeCourse) mà user đang học.
