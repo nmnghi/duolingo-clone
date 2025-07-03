@@ -2,6 +2,7 @@ import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries";
 import { redirect } from "next/navigation";
 import { Quiz } from "../quiz";
 import { userSubscription } from "@/db/schema";
+import { completeSkipLesson } from "@/actions/complete-skip";
 
 type Props = {
     params: {
@@ -26,11 +27,11 @@ const LessonIdPage = async ({
     ]);
 
     if (!lesson || !userProgress) {
-        redirect("/learn");
+      redirect("/learn");
     }
 
     if (!lesson.challenges || lesson.challenges.length === 0) {
-        redirect("/learn");
+      redirect("/learn");
     }
 
     const initialPercentage = lesson.challenges
@@ -44,6 +45,8 @@ const LessonIdPage = async ({
             initialLessonId={lesson.id}
             initialLessonChallenges={lesson.challenges}
             userSubscription={userSubscription}
+            isSkipLesson={lesson.skip}
+            unitId={lesson.unitId}
         />
     );
 }
