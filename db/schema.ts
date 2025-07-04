@@ -37,6 +37,7 @@ export const lessons = pgTable("lessons", {
         onDelete: "cascade"
     }).notNull(),
     order: integer("order").notNull(),
+    skip: boolean("skip").notNull().default(false),
 });
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
