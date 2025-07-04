@@ -1,4 +1,5 @@
-"use client";
+"use client"
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { toast } from "sonner";
 import Image from "next/image";

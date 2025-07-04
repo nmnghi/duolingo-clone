@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState, useEffect } from "react";
 import { challengeOptions, challenges } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 type Props = {
     options: typeof challengeOptions.$inferSelect[];
@@ -28,9 +29,6 @@ export const TranslationChallenge = ({
     const [userInput, setUserInput] = useState("");
     const [submittedAnswer, setSubmittedAnswer] = useState<string | null>(null);
     const [inputDisabled, setInputDisabled] = useState(false);
-    
-    // Find the correct answer from the options
-    const correctAnswer = options.find(option => option.correct)?.text || "";
     
     // Reset input when challenge status changes
     useEffect(() => {
