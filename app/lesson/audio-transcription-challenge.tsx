@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState, useEffect, useRef } from "react";
 import { challengeOptions, challenges } from "@/db/schema";
 import { cn } from "@/lib/utils";

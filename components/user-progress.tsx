@@ -4,7 +4,6 @@ import { InfinityIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type Props = {
     activeCourse: typeof courses.$inferSelect;
     hearts: number;

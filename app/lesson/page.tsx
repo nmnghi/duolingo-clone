@@ -1,7 +1,6 @@
 import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries";
 import { redirect } from "next/navigation";
 import { Quiz } from "./quiz";
-import { get } from "http";
 
 const LessonPage = async () => {
     const lessonData = getLesson();
