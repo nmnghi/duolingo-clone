@@ -24,6 +24,22 @@ export const ChallengeCreate = () => {
               id: "ASSIST",
               name: "ASSIST",
             },
+            {
+              id: "MATCH",
+              name: "MATCH",
+            },
+            {
+              id: "AUDIO_TRANSCRIPTION",
+              name: "AUDIO_TRANSCRIPTION",
+            },
+            {
+              id: "DIALOGUE",
+              name: "DIALOGUE",
+            },
+            {
+              id: "TRANSLATION",
+              name: "TRANSLATION",
+            },
           ]}
           validate={[required()]}
         />

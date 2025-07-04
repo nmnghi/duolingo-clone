@@ -12,6 +12,7 @@ import { useHeartsModal } from "@/store/use-hearts-modal";
 import { usePracticeModal } from "@/store/use-practice-modal";
 import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { getTranslationUserInput } from "./translation-challenge";
 
 import { Header } from "./header";
 import { Footer } from "./footer";
@@ -30,8 +31,8 @@ type Props = {
   userSubscription: typeof userSubscription.$inferSelect & {
     isActive: boolean;
   } | null;
-  isSkipLesson?: boolean; // thêm prop skip
-  unitId: number;         // thêm unitId để gọi API
+  isSkipLesson?: boolean;
+  unitId: number;
 };
 
 export const Quiz = ({
@@ -55,11 +56,11 @@ export const Quiz = ({
   const { width, height } = useWindowSize();
   const router = useRouter();
 
-  const [finishAudio, , finishControls] = useAudio({ src: "/finish.mp3" });
-  const [correctAudio, , correctControls] = useAudio({ src: "/correct.wav" });
-  const [incorrectAudio, , incorrectControls] = useAudio({ src: "/incorrect.wav" });
-
   const [pending, startTransition] = useTransition();
+
+  const [finishAudio, _f, finishControls] = useAudio({ src: "/finish.mp3" });
+  const [correctAudio, _c, correctControls] = useAudio({ src: "/correct.wav" });
+  const [incorrectAudio, _i, incorrectControls] = useAudio({ src: "/incorrect.wav" });
 
   const [lessonId] = useState(initialLessonId);
   const [hearts, setHearts] = useState(initialHearts);
@@ -87,6 +88,56 @@ export const Quiz = ({
     setSelectedOption(id);
   };
 
+  const handleCorrect = () => {
+    startTransition(() => {
+      upsertChallengeProgress(challenge.id)
+        .then((response) => {
+          if (response?.error === "hearts") {
+            openHeartsModal();
+            return;
+          }
+          correctControls.play();
+          setStatus("correct");
+          setPercentage((prev) => prev + 100 / challenges.length);
+          if (initialPercentage === 100) {
+            setHearts((prev) => Math.min(prev + 1, 5));
+          }
+        })
+        .catch(() => toast.error("Something went wrong. Please try again"));
+    });
+  };
+
+  const handleIncorrect = () => {
+    startTransition(() => {
+      reduceHearts(challenge.id)
+        .then((response) => {
+          if (response?.error === "hearts") {
+            openHeartsModal();
+            return;
+          }
+          incorrectControls.play();
+          setStatus("wrong");
+          if (!response?.error) {
+            setHearts((prev) => Math.max(prev - 1, 0));
+          }
+        })
+        .catch(() => toast.error("Something went wrong. Please try again"));
+    });
+  };
+
+  const handleCompleteSkip = async () => {
+    try {
+      await fetch("/api/complete-skip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ unitId }),
+      });
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to complete skip lesson:", error);
+    }
+  };
+
   const onContinue = () => {
     if (!selectedOption) return;
 
@@ -103,77 +154,52 @@ export const Quiz = ({
       return;
     }
 
+    if (challenge.type === "MATCH" || challenge.type === "AUDIO_TRANSCRIPTION") {
+      if (selectedOption === options[0].id) {
+        handleCorrect();
+      } else {
+        handleIncorrect();
+      }
+      return;
+    }
+
+    if (challenge.type === "TRANSLATION") {
+      const userInput = getTranslationUserInput();
+      const correctAnswer = options.find((option) => option.correct)?.text || "";
+      const isCorrect = userInput.trim().toLowerCase() === correctAnswer.toLowerCase();
+      if (isCorrect) {
+        handleCorrect();
+      } else {
+        handleIncorrect();
+      }
+      return;
+    }
+
     const correctOption = options.find((option) => option.correct);
     if (!correctOption) return;
 
     if (correctOption.id === selectedOption) {
-      startTransition(() => {
-        upsertChallengeProgress(challenge.id)
-          .then((response) => {
-            if (response?.error === "hearts") {
-              openHeartsModal();
-              return;
-            }
-
-            correctControls.play();
-            setStatus("correct");
-            setPercentage((prev) => prev + 100 / challenges.length);
-
-            if (initialPercentage === 100) {
-              setHearts((prev) => Math.min(prev + 1, 5));
-            }
-          })
-          .catch(() => toast.error("Something went wrong. Please try again"));
-      });
+      handleCorrect();
     } else {
-      startTransition(() => {
-        reduceHearts(challenge.id)
-          .then((response) => {
-            if (response?.error === "hearts") {
-              openHeartsModal();
-              return;
-            }
-
-            incorrectControls.play();
-            setStatus("wrong");
-
-            if (!response?.error) {
-              setHearts((prev) => Math.max(prev - 1, 0));
-            }
-          })
-          .catch(() => toast.error("Something went wrong. Please try again"));
-      });
+      handleIncorrect();
     }
   };
 
-  // Gọi API để đánh dấu hoàn thành unit nếu là bài skip
-  const handleCompleteSkip = async () => {
-    try {
-      await fetch("/api/complete-skip", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ unitId }),
-      });
-
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to complete skip lesson:", error);
-    }
-  };
-
-    useEffect(() => {
+  useEffect(() => {
     if (!challenge) {
-        finishControls.play();
-
-        console.log("🎯 No more challenge, finished!");
-
-        if (isSkipLesson) {
-            console.log("🚀 Calling complete skip API for unitId:", unitId);
-           handleCompleteSkip();
-        }
+      finishControls.play();
+      if (isSkipLesson) {
+        console.log("🚀 Calling complete skip API for unitId:", unitId);
+        handleCompleteSkip();
+      }
     }
-    }, [challenge, finishControls, isSkipLesson, unitId]);
+  }, [challenge, finishControls, isSkipLesson, unitId]);
 
+  useEffect(() => {
+    if (status === "none" && challenge?.type === "MATCH") {
+      setSelectedOption(undefined);
+    }
+  }, [status, challenge?.type]);
 
   if (!challenge) {
     return (
@@ -202,21 +228,34 @@ export const Quiz = ({
             width={50}
           />
           <h1 className="text-xl lg:text-3xl font-bold text-neutral-700">
-            Great job! <br /> You&apos;ve completed the lesson.
+            Great job! <br /> You've completed the lesson.
           </h1>
           <div className="flex items-center gap-x-4 w-full">
             <ResultCard variant="points" value={challenges.length * 10} />
             <ResultCard variant="hearts" value={hearts} />
           </div>
         </div>
-        <Footer lessonId={lessonId} status="completed" onCheck={() => router.push("/learn")} />
+        <Footer
+          lessonId={lessonId}
+          status="completed"
+          onCheck={() => router.push("/learn")}
+        />
       </>
     );
   }
 
-  const title = challenge.type === "ASSIST"
-    ? "Select the correct meaning"
-    : challenge.question;
+  const title =
+    challenge.type === "ASSIST"
+      ? "Chọn đáp án đúng nhất"
+      : challenge.type === "MATCH"
+      ? "Ghép từ với nghĩa của nó"
+      : challenge.type === "AUDIO_TRANSCRIPTION"
+      ? "Nhấn vào những gì bạn nghe được"
+      : challenge.type === "DIALOGUE"
+      ? "Hoàn thành hội thoại"
+      : challenge.type === "TRANSLATION"
+      ? "Viết lại bằng tiếng Anh"
+      : challenge.question;
 
   return (
     <>
@@ -235,9 +274,7 @@ export const Quiz = ({
               {title}
             </h1>
             <div>
-              {challenge.type === "ASSIST" && (
-                <QuestionBubble question={challenge.question} />
-              )}
+              {challenge.type === "ASSIST" && <QuestionBubble question={challenge.question} />}
               <Challenge
                 options={options}
                 onSelect={onSelect}
@@ -245,6 +282,7 @@ export const Quiz = ({
                 selectedOption={selectedOption}
                 disabled={pending}
                 type={challenge.type}
+                question={challenge.question}
               />
             </div>
           </div>

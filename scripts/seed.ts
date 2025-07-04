@@ -8,211 +8,95 @@ const db = drizzle(sql, { schema });
 
 const main = async () => {
   try {
-    console.log("Seeding database");
+    console.log("Seeding database...");
 
-    await db.delete(schema.challengeOptions);
-    await db.delete(schema.challenges);
-    await db.delete(schema.userProgress);
-    await db.delete(schema.challengeProgress);
-    await db.delete(schema.lessons);
-    await db.delete(schema.units);
-    await db.delete(schema.userSubscription);
-    await db.delete(schema.courses);
-
-    await db.insert(schema.courses).values([
+     await db.insert(schema.courses).values([
       { id: 1, title: "English", imageSrc: "/uk.svg" },
       { id: 2, title: "Spanish", imageSrc: "/es.svg" },
       { id: 3, title: "French", imageSrc: "/fr.svg" },
       { id: 4, title: "Japanese", imageSrc: "/jp.svg" },
     ]);
 
+    // 📚 Seed units
     await db.insert(schema.units).values([
-      {
-        id: 1,
-        courseId: 1,
-        title: "Phần 1",
-        description: "Mời khách xơi nước",
-        order: 1,
-      },
-      {
-        id: 2,
-        courseId: 1,
-        title: "Phần 2",
-        description: "Giới thiệu gốc gác",
-        order: 2,
-      },
+      { id: 1, courseId: 1, title: "Phần 1", description: "Mời khách xơi nước", order: 1 },
+      { id: 2, courseId: 1, title: "Phần 2", description: "Giới thiệu gốc gác", order: 2 },
     ]);
 
+    // 📖 Seed lessons (unit 1: regular, unit 2: có skip lesson)
     await db.insert(schema.lessons).values([
-      { id: 1, unitId: 1, order: 1, title: "Cửa 1", skip: false }, //phần 1
+      { id: 1, unitId: 1, order: 1, title: "Cửa 1", skip: false },
       { id: 2, unitId: 1, order: 2, title: "Cửa 2", skip: false },
       { id: 3, unitId: 1, order: 3, title: "Cửa 3", skip: false },
       { id: 4, unitId: 1, order: 4, title: "Cửa 4", skip: false },
       { id: 5, unitId: 1, order: 5, title: "Cửa 5", skip: false },
-
-      { id: 6, unitId: 2, order: 0, title: "Cửa 0", skip: true }, //phần 2
+      { id: 6, unitId: 2, order: 0, title: "Cửa 0", skip: true }, // skip lesson
       { id: 7, unitId: 2, order: 1, title: "Cửa 1", skip: false },
       { id: 8, unitId: 2, order: 2, title: "Cửa 2", skip: false },
-      { id: 9, unitId: 2, order: 3, title: "Cửa 3", skip: false },
-      { id: 10, unitId: 2, order: 4, title: "Cửa 4", skip: false },
-      { id: 11, unitId: 2, order: 5, title: "Cửa 5", skip: false },
     ]);
 
+    // ❓ Seed challenges
     await db.insert(schema.challenges).values([
-      // Unit 1 - Lesson 1
-      { id: 1, lessonId: 1, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 2, lessonId: 1, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 3, lessonId: 1, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
+    // Unit 1 - Lessons 1 to 5
+        { id: 1, lessonId: 1, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
+        { id: 2, lessonId: 2, type: "ASSIST", order: 1, question: '"trà" là gì?' },
+        { id: 3, lessonId: 3, type: "MATCH", order: 1, question: "Ghép cặp nghĩa" },
+        { id: 4, lessonId: 4, type: "AUDIO_TRANSCRIPTION", order: 1, question: "Nghe và viết lại" },
+        { id: 5, lessonId: 5, type: "DIALOGUE", order: 1, question: "Trà hay nước?" },
 
-      // Unit 1 - Lesson 2
-      { id: 4, lessonId: 2, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 5, lessonId: 2, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 6, lessonId: 2, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
+        // Unit 2 - Skip lesson (lessonId: 6)
+        { id: 6, lessonId: 6, type: "SELECT", order: 1, question: 'Chọn nghĩa đúng của "milk"' },
 
-      // Unit 1 - Lesson 3
-      { id: 7, lessonId: 3, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 8, lessonId: 3, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 9, lessonId: 3, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
-      // Unit 1 - Lesson 4
-      { id: 10, lessonId: 4, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 11, lessonId: 4, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 12, lessonId: 4, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
-      // Unit 1 - Lesson 5
-      { id: 13, lessonId: 5, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 14, lessonId: 5, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 15, lessonId: 5, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
-      // Unit 2 - Lesson 0 (Skip)
-      { id: 16, lessonId: 6, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 17, lessonId: 6, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 18, lessonId: 6, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
-      // Unit 2 - Lesson 7
-      { id: 19, lessonId: 7, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 20, lessonId: 7, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 21, lessonId: 7, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
-      // Unit 2 - Lesson 8
-      { id: 22, lessonId: 8, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
-      { id: 23, lessonId: 8, type: "ASSIST", order: 2, question: '"trà"?' },
-      { id: 24, lessonId: 8, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
-
+        // Unit 2 - Regular lesson (lessonId: 7)
+        { id: 7, lessonId: 7, type: "TRANSLATION", order: 1, question: "Cà phê với sữa" },
     ]);
 
 
     await db.insert(schema.challengeOptions).values([
-      // Challenge 1
-      { challengeId: 1, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 1, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 1, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 1 (SELECT)
+        { challengeId: 1, text: "tea", correct: true, imageSrc: "/images/tea.png", audioSrc: "/uk_tea.mp3" },
+        { challengeId: 1, text: "coffee", correct: false, imageSrc: "/images/coffee.png", audioSrc: "/uk_coffee.mp3" },
+        { challengeId: 1, text: "milk", correct: false, imageSrc: "/images/milk.png", audioSrc: "/uk_milk.mp3" },
 
-      { challengeId: 2, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 2, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 2, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 2 (ASSIST)
+        { challengeId: 2, text: "tea", correct: true, audioSrc: "/uk_tea.mp3" },
+        { challengeId: 2, text: "coffee", correct: false, audioSrc: "/uk_coffee.mp3" },
+        { challengeId: 2, text: "milk", correct: false, audioSrc: "/uk_milk.mp3" },
 
-      { challengeId: 3, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 3, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 3, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 3 (MATCH)
+        { challengeId: 3, text: "trà", correct: false, matchId: 1 },
+        { challengeId: 3, text: "sữa", correct: false, matchId: 2 },
+        { challengeId: 3, text: "tea", correct: true, audioSrc: "/uk_tea.mp3", matchId: 1 },
+        { challengeId: 3, text: "milk", correct: true, audioSrc: "/uk_milk.mp3", matchId: 2 },
 
-      // Challenge 4–6 (reuse set)
-      { challengeId: 4, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 4, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 4, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 4 (AUDIO_TRANSCRIPTION)
+        { challengeId: 4, text: "I", correct: true, audioSrc: "/do_you drink_milk.mp3" },
+        { challengeId: 4, text: "love", correct: true, audioSrc: "/do_you drink_milk.mp3" },
+        { challengeId: 4, text: "coffee", correct: true, audioSrc: "/do_you drink_milk.mp3" },
+        { challengeId: 4, text: "milk", correct: false },
+        { challengeId: 4, text: "tea", correct: false },
 
-      { challengeId: 5, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 5, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 5, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 5 (DIALOGUE)
+        { challengeId: 5, text: "Tea, please.", correct: true, audioSrc: "/tea_please.mp3" },
+        { challengeId: 5, text: "Water, please.", correct: false, audioSrc: "/water_please.mp3" },
+        { challengeId: 5, text: "Goodbye.", correct: false, audioSrc: "/goodbye.mp3" },
 
-      { challengeId: 6, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 6, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 6, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
+        // challengeId: 6 (Skip lesson SELECT)
+        { challengeId: 6, text: "milk", correct: true, imageSrc: "/images/milk.png", audioSrc: "/uk_milk.mp3" },
+        { challengeId: 6, text: "tea", correct: false, imageSrc: "/images/tea.png" },
+        { challengeId: 6, text: "coffee", correct: false, imageSrc: "/images/coffee.png" },
 
-      // Challenge 7–9 (reuse)
-      { challengeId: 7, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 7, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 7, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 8, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 8, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 8, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 9, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 9, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 9, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      // Challenge 10–12 (reuse)
-      { challengeId: 10, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 10, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 10, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 11, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 11, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 11, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 12, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 12, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 12, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      // Challenge 13–15
-      { challengeId: 13, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 13, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 13, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 14, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 14, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 14, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 15, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 15, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 15, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      // Challenge 16–18 (for skip lesson)
-      { challengeId: 16, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 16, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 16, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 17, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 17, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 17, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 18, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 18, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 18, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      // Challenge 19–21 (same as 1–3)
-      { challengeId: 19, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 19, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 19, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 20, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 20, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 20, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 21, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 21, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 21, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      // Challenge 22–24 (same as 1–3 again)
-      { challengeId: 22, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 22, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 22, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 23, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 23, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 23, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
-
-      { challengeId: 24, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
-      { challengeId: 24, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
-      { challengeId: 24, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
-
+        // challengeId: 7 (TRANSLATION)
+        { challengeId: 7, text: "coffee with milk", correct: true },
+        { challengeId: 7, text: "milk with coffee", correct: false },
+        { challengeId: 7, text: "tea with milk", correct: false },
     ]);
 
 
-    console.log("Seeding finished");
+
+    console.log("Seeding finished!");
   } catch (error) {
-    console.error(error);
+    console.error("Error seeding:", error);
     throw new Error("Failed to seed the database");
   }
 };

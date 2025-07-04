@@ -48,7 +48,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     challenges: many(challenges),
 }));
 
-export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
+export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST", "MATCH", "AUDIO_TRANSCRIPTION", "DIALOGUE", "TRANSLATION"]);
 
 export const challenges = pgTable("challenges", {
     id: serial("id").primaryKey(),
@@ -78,6 +78,9 @@ export const challengeOptions = pgTable("challenge_options", {
     correct: boolean("correct").notNull(),
     imageSrc: text("image_src"),
     audioSrc: text("audio_src"),
+    // Adding matchId to indicate which options are pairs in a MATCH challenge
+    // Options with the same matchId are considered a matching pair
+    matchId: integer("match_id"),
 });
 
 export const challengeOptionsRelations = relations(challengeOptions, ({ one }) => ({
@@ -107,7 +110,7 @@ export const challengeProgressRelations = relations(challengeProgress, ({ one })
 export const userProgress = pgTable("user_progress", {
     userId: text("user_id").primaryKey(),
     userName: text("user_name").notNull().default("User"),
-    userImageSrc: text("user_image_src").notNull().default("/mascot.svg"),
+    userImageSrc: text("user_image_src").notNull().default("/mascot.png"),
     activeCourseId: integer("active_course_id").references(() => courses.id, {
         onDelete: "cascade"
     }),
