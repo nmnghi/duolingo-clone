@@ -5,7 +5,6 @@ import { getUserSubscription, getUserProgress } from "@/db/queries";
 import { redirect } from "next/navigation";
 import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
-import { Header } from "../learn/header";
 import PronouncePage from "./pronunciation-board";
 
 export default async function PronounceLayoutPage() {
@@ -30,7 +29,6 @@ export default async function PronounceLayoutPage() {
         {!isPro && <Promo />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
-
       <FeedWrapper>
         <PronouncePage />
       </FeedWrapper>
