@@ -70,7 +70,7 @@ export const DialogueChallenge = ({
                 <div className="flex items-start gap-4">
                     <div className="relative w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0">
                         <Image
-                            src="/bear.svg"
+                            src="/characters/bear.svg"
                             alt="Bear"
                             fill
                             className="object-contain"
@@ -108,7 +108,7 @@ export const DialogueChallenge = ({
                 <div className="flex items-start gap-4 flex-row-reverse">
                     <div className="relative w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0">
                         <Image
-                            src="/oscar.svg"
+                            src="/characters/oscar.svg"
                             alt="Oscar"
                             fill
                             className="object-contain"

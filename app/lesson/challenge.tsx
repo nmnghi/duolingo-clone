@@ -5,6 +5,7 @@ import {Card} from "./card";
 import { MatchChallenge } from "./match-challenge";
 import { AudioTranscriptionChallenge } from "./audio-transcription-challenge";
 import { DialogueChallenge } from "./dialogue-challenge";
+import { TranslationChallenge } from "./translation-challenge";
 
 type Props ={
     options: typeof challengeOptions.$inferSelect[];
@@ -54,6 +55,20 @@ export const Challenge =({
     if (type === "DIALOGUE") {
         return (
             <DialogueChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+                question={question || ""}
+            />
+        );
+    }
+    
+    if (type === "TRANSLATION") {
+        return (
+            <TranslationChallenge
                 options={options}
                 onSelect={onSelect}
                 status={status}

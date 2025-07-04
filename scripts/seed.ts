@@ -128,6 +128,13 @@ const main = async () => {
                 order: 6,
                 question: 'Tea or water?',
             },
+            {
+                id: 7,
+                lessonId: 1, //Bài học 1
+                type: "TRANSLATION",
+                order: 7,
+                question: 'Cà phê với sữa',
+            },
         ]);
 
         await db.insert(schema.challengeOptions).values([
@@ -303,23 +310,32 @@ const main = async () => {
             },
         ]);
 
+        await db.insert(schema.challengeOptions).values([
+            // Correct translation for "Cà phê với sữa"
+            {
+                challengeId: 7,
+                correct: true,
+                text: "coffee with milk",
+            },
+        ]);
+
         await db.insert(schema.challenges).values([
             {
-                id: 7,
+                id: 8,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 1,
                 question: 'Đâu là "trà"?',
             },
             {
-                id: 8,
+                id: 9,
                 lessonId: 2, //Bài học 2
                 type: "ASSIST",
                 order: 2,
                 question: '"trà"?',
             },
             {
-                id: 9,
+                id: 10,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 3,

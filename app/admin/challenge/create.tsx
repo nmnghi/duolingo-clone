@@ -36,6 +36,10 @@ export const ChallengeCreate = () => {
               id: "DIALOGUE",
               name: "DIALOGUE",
             },
+            {
+              id: "TRANSLATION",
+              name: "TRANSLATION",
+            },
           ]}
           validate={[required()]}
         />

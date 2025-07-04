@@ -14,6 +14,7 @@ import { useHeartsModal } from "@/store/use-hearts-modal";
 import { usePracticeModal } from "@/store/use-practice-modal";
 import { challengeOptions, challenges, lessons, userSubscription } from "@/db/schema"
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { getTranslationUserInput } from "./translation-challenge";
 
 import { Header } from "./header";
 import { Footer } from "./footer";
@@ -157,6 +158,23 @@ export const Quiz = ({
             return;
         }
 
+        // Special handling for TRANSLATION type
+        if (challenge.type === "TRANSLATION") {
+            // For translation challenges, we need to check the user's input
+            const userInput = getTranslationUserInput();
+            const correctAnswer = options.find(option => option.correct)?.text || "";
+            
+            // Check if the user's answer matches the correct answer (case-insensitive)
+            const isCorrect = userInput.trim().toLowerCase() === correctAnswer.toLowerCase();
+            
+            if (isCorrect) {
+                handleCorrect();
+            } else {
+                handleIncorrect();
+            }
+            return;
+        }
+
         const correctOption = options.find((option) => option.correct);
         if (!correctOption) return;
 
@@ -239,6 +257,8 @@ export const Quiz = ({
         ? "Viết những gì bạn nghe"
         : challenge.type === "DIALOGUE"
         ? "Hoàn thành hội thoại"
+        : challenge.type === "TRANSLATION"
+        ? "Viết lại bằng tiếng Anh"
         : challenge.question;
     
     return (
