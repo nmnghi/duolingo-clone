@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import {Card} from "./card";
 import { MatchChallenge } from "./match-challenge";
 import { AudioTranscriptionChallenge } from "./audio-transcription-challenge";
+import { DialogueChallenge } from "./dialogue-challenge";
 
 type Props ={
     options: typeof challengeOptions.$inferSelect[];
@@ -12,6 +13,7 @@ type Props ={
     selectedOption?: number;
     disabled?: boolean;
     type: typeof challenges.$inferSelect["type"];
+    question?: string;
 };
 export const Challenge =({
     options,
@@ -20,6 +22,7 @@ export const Challenge =({
     selectedOption,
     disabled,
     type,
+    question,
 
 }: Props) =>{
     if (type === "MATCH") {
@@ -44,6 +47,20 @@ export const Challenge =({
                 selectedOption={selectedOption}
                 disabled={disabled}
                 type={type}
+            />
+        );
+    }
+    
+    if (type === "DIALOGUE") {
+        return (
+            <DialogueChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+                question={question || ""}
             />
         );
     }

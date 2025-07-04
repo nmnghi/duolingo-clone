@@ -81,7 +81,8 @@ export const Card = ({
                 && "border-rose-300 bg-rose-100 hover:bg-rose-100",
             disabled && "pointer-events-none hover:bg-white",
             type === "ASSIST" && "lg:p-3 w-full",
-            type === "MATCH" && "p-3 h-auto min-h-[60px]"
+            type === "MATCH" && "p-3 h-auto min-h-[60px]",
+            type === "DIALOGUE" && "w-full"
         )} 
         >
             {/* No need to render an audio element in the DOM - we're managing it through the Audio API */}
@@ -96,6 +97,7 @@ export const Card = ({
                 "flex items-center justify-between",
                 type === "ASSIST" && "flex-row-reverse",
                 type === "MATCH" && "justify-between",
+                type === "DIALOGUE" && "justify-between",
             )}>
 
                 {type === "ASSIST" && <div />}

@@ -237,6 +237,8 @@ export const Quiz = ({
         ? "Ghép từ với nghĩa của nó"
         : challenge.type === "AUDIO_TRANSCRIPTION"
         ? "Viết những gì bạn nghe"
+        : challenge.type === "DIALOGUE"
+        ? "Hoàn thành hội thoại"
         : challenge.question;
     
     return (
@@ -267,6 +269,7 @@ export const Quiz = ({
                                 selectedOption = {selectedOption}
                                 disabled = {pending}
                                 type = {challenge.type}
+                                question = {challenge.question}
                             />
                         </div>
                     </div>

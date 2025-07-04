@@ -32,6 +32,10 @@ export const ChallengeList = () => {
               id: "AUDIO_TRANSCRIPTION",
               name: "AUDIO_TRANSCRIPTION",
             },
+            {
+              id: "DIALOGUE",
+              name: "DIALOGUE",
+            },
           ]}
         />
         <ReferenceField source="lessonId" reference="lessons" />

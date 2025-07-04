@@ -121,6 +121,13 @@ const main = async () => {
                 order: 5,
                 question: 'Viết những gì bạn nghe',
             },
+            {
+                id: 6,
+                lessonId: 1, //Bài học 1
+                type: "DIALOGUE",
+                order: 6,
+                question: 'Tea or water?',
+            },
         ]);
 
         await db.insert(schema.challengeOptions).values([
@@ -270,6 +277,29 @@ const main = async () => {
                 challengeId: 5,
                 correct: false,
                 text: "drinking",
+            },
+        ]);
+
+        await db.insert(schema.challengeOptions).values([
+            // Question audio (not a response option)
+            {
+                challengeId: 6,
+                correct: false,
+                text: "What would you like to drink?",
+                audioSrc: "/tea_or_water.mp3",
+            },
+            // Response options
+            {
+                challengeId: 6,
+                correct: true,
+                text: "Tea, please.",
+                audioSrc: "/tea_please.mp3",
+            },
+            {
+                challengeId: 6,
+                correct: false,
+                text: "Goodbye.",
+                audioSrc: "/goodbye.mp3",
             },
         ]);
 
