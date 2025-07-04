@@ -11,7 +11,7 @@ type Props = {
 
 const SidebarData = [
   { label: "Learn", href: "/learn", iconSrc: "/learn.svg" },
-  { label: "Pronounce", href: "/pronounce", iconSrc: "/images/mouth.png" },
+  { label: "Pronounce", href: "/pronounce", iconSrc: "/headphone.svg" },
   { label: "Leaderboard", href: "/leaderboard", iconSrc: "/leaderboard.svg" },
   { label: "Quests", href: "/quests", iconSrc: "/quests.svg" },
   { label: "shop", href: "/shop", iconSrc: "/shop.svg" },

@@ -254,7 +254,7 @@ export const Quiz = ({
         : challenge.type === "MATCH"
         ? "Ghép từ với nghĩa của nó"
         : challenge.type === "AUDIO_TRANSCRIPTION"
-        ? "Viết những gì bạn nghe"
+        ? "Nhấn vào những gì bạn nghe được"
         : challenge.type === "DIALOGUE"
         ? "Hoàn thành hội thoại"
         : challenge.type === "TRANSLATION"

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { challengeOptions, challenges } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   options: typeof challengeOptions.$inferSelect[];
@@ -150,26 +151,28 @@ export const AudioTranscriptionChallenge = ({
   return (
     <div className="flex flex-col gap-6">
       {/* Audio player controls */}
-      <div className="flex items-center justify-center gap-4 mb-4">
-        <button
+      <div className="flex items-end justify-center gap-4 mb-4">
+        <Button
           onClick={playAudio}
           disabled={disabled || !audioSrc}
-          className="p-3 bg-sky-300 rounded-3xl hover:bg-sky-500 transition-colors disabled:opacity-50"
+          variant="primary"
+          className="w-22 h-22 p-0 rounded-2xl flex items-center justify-center"
           aria-label="Play audio"
           title="Play audio"
         >
           <Image src="/volume.svg" alt="Play" width={50} height={50} />
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={playAudioSlow}
           disabled={disabled || !audioSrc}
-          className="p-3 bg-sky-300 rounded-3xl hover:bg-sky-500 transition-colors disabled:opacity-50"
+          variant="primary"
+          className="w-15 h-15 p-0 rounded-2xl flex items-center justify-center"
           aria-label="Play slowly"
           title="Play slowly"
         >
-          <Image src="/turtle.svg" alt="Play slowly" width={35} height={35} />
-        </button>
+          <Image src="/turtle.svg" alt="Play slowly" width={35} height={35} color="white"/>
+        </Button>
       </div>
 
       {/* User's answer area */}
