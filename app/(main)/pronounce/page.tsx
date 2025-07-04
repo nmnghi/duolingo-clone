@@ -32,7 +32,6 @@ export default async function PronounceLayoutPage() {
       </StickyWrapper>
 
       <FeedWrapper>
-        <Header title={userProgress.activeCourse.title} />
         <PronouncePage />
       </FeedWrapper>
     </div>
