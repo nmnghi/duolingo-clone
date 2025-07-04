@@ -68,7 +68,7 @@ export const getUnits = cache(async () => { //trả về các unit thuộc khóa
     const normalizedData = data.map((unit) => {
         const lessonWithCompletedStatus = unit.lessons.map((lesson) => {
 
-            if (lesson.skip || lesson.challenges.length === 0) {
+            if (lesson.challenges.length === 0) {
                 return { ...lesson, completed: false };
             }
 

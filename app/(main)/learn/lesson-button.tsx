@@ -53,13 +53,12 @@ export const LessonButton = ({
     ? Crown
     : Star;
 
-  // Điều hướng đến bài học, hoặc ngăn nếu đang locked
   const href = `/lesson/${id}`;
   const disabled = !skip && locked; // bài skip luôn được mở
 
   const renderProgressButton = (label: string) => (
     <div className="relative h-[102px] w-[102px]">
-      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-10 animate-bounce rounded-xl border-2 bg-white px-3 py-2.5 font-bold uppercase tracking-wide text-green-500">
+      <div className={cn("absolute -top-6 left-1/2 -translate-x-1/2 z-10 animate-bounce rounded-xl border-2 bg-white px-3 py-2.5 font-bold uppercase tracking-wide", skip ? "text-indigo-500" : "text-green-500")}>
         {label}
         <div className="absolute -bottom-2 left-1/2 h-0 w-0 -translate-x-1/2 transform border-x-8 border-t-8 border-x-transparent" />
       </div>
@@ -76,7 +75,7 @@ export const LessonButton = ({
       >
         <Button
           size="rounded"
-          variant={locked ? "locked" : "secondary"}
+          variant={skip ? "super" : locked ? "locked" : "secondary"}
           className="h-[70px] w-[70px] border-b-8"
         >
           <Icon

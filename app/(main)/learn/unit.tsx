@@ -15,6 +15,12 @@ type Props = {
     unit: typeof units.$inferSelect;
   } | undefined;
   activeLessonPercentage: number;
+  allUnits: (typeof units.$inferSelect & {
+    lessons: (typeof lessons.$inferSelect & {
+      completed: boolean;
+      skip: boolean;
+    })[];
+  })[]; 
 };
 
 export const Unit = ({
@@ -25,9 +31,23 @@ export const Unit = ({
   lessons,
   activeLesson,
   activeLessonPercentage,
+  allUnits
 }: Props) => {
     
-  const skipLesson = lessons.find((lesson) => lesson.skip);
+  const allPreviousUnitsCompleted = allUnits
+    .filter((u) => u.order < order)
+    .every((u) =>
+      u.lessons
+        .filter((l) => !l.skip)
+        .every((l) => l.completed)
+    );
+
+  // ✅ THAY ĐỔI: chỉ hiển thị skip nếu unit hiện tại chưa được hoàn thành bằng tay
+  const skipLesson = !allPreviousUnitsCompleted
+    ? lessons.find((lesson) => lesson.skip && !lesson.completed)
+    : undefined;
+
+
   const normalLessons = lessons.filter((lesson) => !lesson.skip);
   const totalCount = normalLessons.length - 1;
 

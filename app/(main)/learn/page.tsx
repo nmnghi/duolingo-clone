@@ -38,6 +38,7 @@ export default async function LearnPage() {
     redirect("/courses");
   }
   const isPro = !!userSubscription?.isActive;
+
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
@@ -67,6 +68,7 @@ export default async function LearnPage() {
                 unit: typeof unitsSchema.$inferSelect;
               } | undefined}
               activeLessonPercentage={lessonPercentage}
+              allUnits={units}
             />
           </div>
         ))}
@@ -74,3 +76,5 @@ export default async function LearnPage() {
     </div>
   );
 }
+
+

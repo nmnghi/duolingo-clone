@@ -89,8 +89,16 @@ const main = async () => {
       { id: 17, lessonId: 6, type: "ASSIST", order: 2, question: '"trà"?' },
       { id: 18, lessonId: 6, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
 
-      // You can optionally add challenges for lessons 7–11 here...
-      // For now we stop at id = 18
+      // Unit 2 - Lesson 7
+      { id: 19, lessonId: 7, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
+      { id: 20, lessonId: 7, type: "ASSIST", order: 2, question: '"trà"?' },
+      { id: 21, lessonId: 7, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
+
+      // Unit 2 - Lesson 8
+      { id: 22, lessonId: 8, type: "SELECT", order: 1, question: 'Đâu là "trà"?' },
+      { id: 23, lessonId: 8, type: "ASSIST", order: 2, question: '"trà"?' },
+      { id: 24, lessonId: 8, type: "SELECT", order: 3, question: 'Đâu là "sữa"?' },
+
     ]);
 
 
@@ -172,6 +180,33 @@ const main = async () => {
       { challengeId: 18, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
       { challengeId: 18, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
       { challengeId: 18, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      // Challenge 19–21 (same as 1–3)
+      { challengeId: 19, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 19, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 19, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      { challengeId: 20, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 20, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 20, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      { challengeId: 21, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 21, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 21, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      // Challenge 22–24 (same as 1–3 again)
+      { challengeId: 22, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 22, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 22, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      { challengeId: 23, correct: true, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 23, correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 23, correct: false, text: "milk", audioSrc: "/uk_milk.mp3" },
+
+      { challengeId: 24, imageSrc: "/images/tea.png", correct: false, text: "tea", audioSrc: "/uk_tea.mp3" },
+      { challengeId: 24, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/uk_coffee.mp3" },
+      { challengeId: 24, imageSrc: "/images/milk.png", correct: true, text: "milk", audioSrc: "/uk_milk.mp3" },
+
     ]);
 
 
