@@ -50,7 +50,6 @@ export default async function LearnPage() {
         {!isPro && (
           <Promo />
           )}
-        <Promo/>
         <Quests points = {userProgress.points}/>
       </StickyWrapper>
       <FeedWrapper>
