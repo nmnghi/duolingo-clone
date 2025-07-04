@@ -1,8 +1,8 @@
 import { challenges } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useCallback } from "react"; 
-import { useAudio, useKey } from "react-use"
+import { useCallback, useState, useEffect } from "react"; 
+import { useKey } from "react-use";
 
 type Props = {
     id: number;
@@ -29,12 +29,43 @@ export const Card = ({
     status,
     type,
 }: Props) => {
-    const [audio, _, controls] = useAudio({ src: audioSrc || "" });
+    const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+    
+    useEffect(() => {
+        if (!audioSrc) {
+            setAudioElement(null);
+            return;
+        }
+        
+        const audio = new Audio(audioSrc);
+        setAudioElement(audio);
+        
+        return () => {
+            audio.pause();
+            audio.src = "";
+        };
+    }, [audioSrc]);
+    
     const handleClick = useCallback(() => {
         if (disabled) return;
-        controls.play();
+        
+        if (audioElement && audioSrc) {
+            try {
+                audioElement.currentTime = 0;
+                
+                const playPromise = audioElement.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch((error: Error) => {
+                        console.error("Error playing audio:", error);
+                    });
+                }
+            } catch (error) {
+                console.error("Error trying to play audio:", error);
+            }
+        }
+        
         onClick();
-    }, [disabled, onClick, controls]);
+    }, [disabled, onClick, audioElement, audioSrc]);
 
     useKey(shortcut, handleClick, {}, [handleClick]);
 
@@ -42,20 +73,22 @@ export const Card = ({
         <div        
             onClick={handleClick}
             className={cn(
-            "h-full border-2 rounded-xl border-b-4 hover:bg-black/5 p-4 lg:p-6 cursor-pointer active: border-b-2",
+            "h-full border-2 rounded-xl border-b-4 hover:bg-black/5 p-4 lg:p-6 cursor-pointer active:border-b-2",
             selected && "border-sky-300 bg-sky-100 hover:bg-sky-100",
             selected && status === "correct"
-                && "border-green-300 bg-green-100 Thover:bg-green-100", 
+                && "border-green-300 bg-green-100 hover:bg-green-100", 
             selected && status === "wrong"
                 && "border-rose-300 bg-rose-100 hover:bg-rose-100",
             disabled && "pointer-events-none hover:bg-white",
-            type === "ASSIST" && "lg: p-3 w=full"
+            type === "ASSIST" && "lg:p-3 w-full",
+            type === "MATCH" && "p-3 h-auto min-h-[60px]",
+            type === "DIALOGUE" && "w-full"
         )} 
         >
-            {audio}
+            {/* No need to render an audio element in the DOM - we're managing it through the Audio API */}
             {imageSrc && (
                 <div
-                    className="relative aspect-square mb-4 max-h-[80px] lg: max-h-[150px] w-full"
+                    className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full"
                     >
                         <Image src={imageSrc} fill alt={text} />
                 </div>
@@ -63,6 +96,8 @@ export const Card = ({
             <div className={cn(
                 "flex items-center justify-between",
                 type === "ASSIST" && "flex-row-reverse",
+                type === "MATCH" && "justify-between",
+                type === "DIALOGUE" && "justify-between",
             )}>
 
                 {type === "ASSIST" && <div />}

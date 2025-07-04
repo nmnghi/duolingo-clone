@@ -107,6 +107,34 @@ const main = async () => {
                 order: 3,
                 question: 'Đâu là "sữa"?',
             },
+            {
+                id: 4,
+                lessonId: 1, //Bài học 1
+                type: "MATCH",
+                order: 4,
+                question: 'Ghép từ với nghĩa của nó',
+            },
+            {
+                id: 5,
+                lessonId: 1, //Bài học 1
+                type: "AUDIO_TRANSCRIPTION",
+                order: 5,
+                question: 'Viết những gì bạn nghe',
+            },
+            {
+                id: 6,
+                lessonId: 1, //Bài học 1
+                type: "DIALOGUE",
+                order: 6,
+                question: 'Tea or water?',
+            },
+            {
+                id: 7,
+                lessonId: 1, //Bài học 1
+                type: "TRANSLATION",
+                order: 7,
+                question: 'Cà phê với sữa',
+            },
         ]);
 
         await db.insert(schema.challengeOptions).values([
@@ -177,24 +205,137 @@ const main = async () => {
                 audioSrc: "/uk_milk.mp3",
             },
         ]);
+        
+        // Add match pairs for the MATCH challenge
+        await db.insert(schema.challengeOptions).values([
+            // Source words (native language)
+            {
+                challengeId: 4,
+                correct: false,
+                text: "trà",
+                matchId: 1,  // Matches with "tea"
+            },
+            {
+                challengeId: 4,
+                correct: false,
+                text: "cà phê",
+                matchId: 2,  // Matches with "coffee"
+            },
+            {
+                challengeId: 4,
+                correct: false,
+                text: "sữa",
+                matchId: 3,  // Matches with "milk"
+            },
+            // Target words (language being learned)
+            {
+                challengeId: 4,
+                correct: true,
+                text: "tea",
+                audioSrc: "/uk_tea.mp3",
+                matchId: 1,  // Matches with "trà"
+            },
+            {
+                challengeId: 4,
+                correct: true,
+                text: "coffee",
+                audioSrc: "/uk_coffee.mp3",
+                matchId: 2,  // Matches with "cà phê"
+            },
+            {
+                challengeId: 4,
+                correct: true,
+                text: "milk",
+                audioSrc: "/uk_milk.mp3",
+                matchId: 3,  // Matches with "sữa"
+            },
+        ]);
+        
+        await db.insert(schema.challengeOptions).values([
+            {
+                challengeId: 5,
+                correct: true,
+                text: "I",
+                audioSrc: "/i_love_coffee.mp3",
+            },
+            {
+                challengeId: 5,
+                correct: true,
+                text: "love",
+                audioSrc: "/i_love_coffee.mp3", 
+            },
+            {
+                challengeId: 5,
+                correct: true,
+                text: "coffee",
+                audioSrc: "/i_love_coffee.mp3",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "like",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "tea",
+            },
+            {
+                challengeId: 5,
+                correct: false,
+                text: "drinking",
+            },
+        ]);
+
+        await db.insert(schema.challengeOptions).values([
+            // Question audio (not a response option)
+            {
+                challengeId: 6,
+                correct: false,
+                text: "What would you like to drink?",
+                audioSrc: "/tea_or_water.mp3",
+            },
+            // Response options
+            {
+                challengeId: 6,
+                correct: true,
+                text: "Tea, please.",
+                audioSrc: "/tea_please.mp3",
+            },
+            {
+                challengeId: 6,
+                correct: false,
+                text: "Goodbye.",
+                audioSrc: "/goodbye.mp3",
+            },
+        ]);
+
+        await db.insert(schema.challengeOptions).values([
+            // Correct translation for "Cà phê với sữa"
+            {
+                challengeId: 7,
+                correct: true,
+                text: "coffee with milk",
+            },
+        ]);
 
         await db.insert(schema.challenges).values([
             {
-                id: 4,
+                id: 8,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 1,
                 question: 'Đâu là "trà"?',
             },
             {
-                id: 5,
+                id: 9,
                 lessonId: 2, //Bài học 2
                 type: "ASSIST",
                 order: 2,
                 question: '"trà"?',
             },
             {
-                id: 6,
+                id: 10,
                 lessonId: 2, //Bài học 2
                 type: "SELECT",
                 order: 3,

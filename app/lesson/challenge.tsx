@@ -2,6 +2,11 @@ import { challengeOptions, challenges } from "@/db/schema"
 import { cn } from "@/lib/utils";
 
 import {Card} from "./card";
+import { MatchChallenge } from "./match-challenge";
+import { AudioTranscriptionChallenge } from "./audio-transcription-challenge";
+import { DialogueChallenge } from "./dialogue-challenge";
+import { TranslationChallenge } from "./translation-challenge";
+
 type Props ={
     options: typeof challengeOptions.$inferSelect[];
     onSelect: (id: number) => void;
@@ -9,6 +14,7 @@ type Props ={
     selectedOption?: number;
     disabled?: boolean;
     type: typeof challenges.$inferSelect["type"];
+    question?: string;
 };
 export const Challenge =({
     options,
@@ -17,8 +23,63 @@ export const Challenge =({
     selectedOption,
     disabled,
     type,
+    question,
 
 }: Props) =>{
+    if (type === "MATCH") {
+        return (
+            <MatchChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+            />
+        );
+    }
+    
+    if (type === "AUDIO_TRANSCRIPTION") {
+        return (
+            <AudioTranscriptionChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+            />
+        );
+    }
+    
+    if (type === "DIALOGUE") {
+        return (
+            <DialogueChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+                question={question || ""}
+            />
+        );
+    }
+    
+    if (type === "TRANSLATION") {
+        return (
+            <TranslationChallenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={disabled}
+                type={type}
+                question={question || ""}
+            />
+        );
+    }
+    
     return (
         <div className={cn(
             "grid gap-2",
