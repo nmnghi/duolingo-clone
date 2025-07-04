@@ -24,9 +24,9 @@ export default function Sidebar({ className }: Props) {
       className
     )}>
       <Link href="/learn">
-        <div className="pt-8 pl-1 pb-7 flex items-center gap-x-3">
-          <Image src="/mascot.png" alt="Mascot" height={60} width={60} />
-          <h1 className="text-2xl text-cyan-600 tracking-wide font-extrabold">
+        <div className="flex items-center gap-x-3 pb-7 pl-4 pt-8">
+          <Image src="/mascot.svg" alt="Mascot" height={40} width={40} />
+          <h1 className="text-2xl font-extrabold tracking-wide text-green-600">
             GoLang
           </h1>
         </div>
