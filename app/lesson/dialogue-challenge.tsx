@@ -105,7 +105,7 @@ export const DialogueChallenge = ({
                 </div>
 
                 {/* Oscar's response area */}
-                <div className="flex items-start gap-4 flex-row-reverse">
+                <div className="flex items-start gap-4 flex-row-reverse -mb-5">
                     <div className="relative w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0">
                         <Image
                             src="/characters/oscar.svg"
@@ -146,9 +146,6 @@ export const DialogueChallenge = ({
 
             {/* Response options */}
             <div className="space-y-3">
-                <h3 className="text-sm lg:text-base font-semibold text-neutral-600 text-center">
-                    Chọn câu trả lời phù hợp nhất:
-                </h3>
                 <div className="grid gap-3">
                     {responseOptions.map((option, i) => (
                         <Card
