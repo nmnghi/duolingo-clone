@@ -112,109 +112,108 @@ const main = async () => {
         { id: 18, lessonId: 8, type: "ASSIST", order: 1, question: "Nhật Bản" },
         ]);
 
-await db.insert(schema.challengeOptions).values([
-  // Challenge 1: SELECT - "trà"
-  { challengeId: 1, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/tea.mp3" },
-  { challengeId: 1, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/coffee.mp3" },
-  { challengeId: 1, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/milk.mp3" },
+    await db.insert(schema.challengeOptions).values([
+        // Challenge 1: SELECT - "trà"
+        { challengeId: 1, imageSrc: "/images/tea.png", correct: true, text: "tea", audioSrc: "/tea.mp3" },
+        { challengeId: 1, imageSrc: "/images/coffee.png", correct: false, text: "coffee", audioSrc: "/coffee.mp3" },
+        { challengeId: 1, imageSrc: "/images/milk.png", correct: false, text: "milk", audioSrc: "/milk.mp3" },
 
-  // Challenge 2: ASSIST - "Trà"
-  { challengeId: 2, correct: true, text: "tea", audioSrc: "/tea.mp3" },
-  { challengeId: 2, correct: false, text: "milk", audioSrc: "/milk.mp3" },
-  { challengeId: 2, correct: false, text: "coffee", audioSrc: "/coffee.mp3" },
+        // Challenge 2: ASSIST - "Trà"
+        { challengeId: 2, correct: true, text: "tea", audioSrc: "/tea.mp3" },
+        { challengeId: 2, correct: false, text: "milk", audioSrc: "/milk.mp3" },
+        { challengeId: 2, correct: false, text: "coffee", audioSrc: "/coffee.mp3" },
 
-  // Challenge 3: TRANSLATION - "Chào mừng"
-  { challengeId: 3, correct: true, text: "welcome" },
+        // Challenge 3: TRANSLATION - "Chào mừng"
+        { challengeId: 3, correct: true, text: "welcome" },
 
-  // Challenge 4: AUDIO_TRANSCRIPTION
-  { challengeId: 4, correct: true, text: "I", audioSrc: "/i_love_coffee.mp3" },
-  { challengeId: 4, correct: true, text: "love", audioSrc: "/i_love_coffee.mp3" },
-  { challengeId: 4, correct: true, text: "coffee", audioSrc: "/i_love_coffee.mp3" },
-  { challengeId: 4, correct: false, text: "like" },
-  { challengeId: 4, correct: false, text: "sugar" },
+        // Challenge 4: AUDIO_TRANSCRIPTION
+        { challengeId: 4, correct: true, text: "I", audioSrc: "/i_love_coffee.mp3" },
+        { challengeId: 4, correct: true, text: "love", audioSrc: "/i_love_coffee.mp3" },
+        { challengeId: 4, correct: true, text: "coffee", audioSrc: "/i_love_coffee.mp3" },
+        { challengeId: 4, correct: false, text: "like" },
+        { challengeId: 4, correct: false, text: "sugar" },
 
-  // Challenge 5: MATCH
-  { challengeId: 5, correct: false, text: "trà", matchId: 1 },
-  { challengeId: 5, correct: false, text: "cà phê", matchId: 2 },
-  { challengeId: 5, correct: false, text: "xin chào", matchId: 3 },
-  { challengeId: 5, correct: false, text: "vui lòng", matchId: 4 },
-  { challengeId: 5, correct: true, text: "tea", audioSrc: "/tea.mp3", matchId: 1 },
-  { challengeId: 5, correct: true, text: "coffee", audioSrc: "/coffee.mp3", matchId: 2 },
-  { challengeId: 5, correct: true, text: "hello", audioSrc: "/hello.mp3", matchId: 3 },
-  { challengeId: 5, correct: true, text: "please", audioSrc: "/please.mp3", matchId: 4 },
+        // Challenge 5: MATCH
+        { challengeId: 5, correct: false, text: "trà", matchId: 1 },
+        { challengeId: 5, correct: false, text: "cà phê", matchId: 2 },
+        { challengeId: 5, correct: false, text: "xin chào", matchId: 3 },
+        { challengeId: 5, correct: false, text: "vui lòng", matchId: 4 },
+        { challengeId: 5, correct: true, text: "tea", audioSrc: "/tea.mp3", matchId: 1 },
+        { challengeId: 5, correct: true, text: "coffee", audioSrc: "/coffee.mp3", matchId: 2 },
+        { challengeId: 5, correct: true, text: "hello", audioSrc: "/hello.mp3", matchId: 3 },
+        { challengeId: 5, correct: true, text: "please", audioSrc: "/please.mp3", matchId: 4 },
 
-  // Challenge 6: DIALOGUE
-  { challengeId: 6, correct: false, text: "Tea or water?", audioSrc: "/tea_or_water.mp3" },
-  { challengeId: 6, correct: true, text: "Tea, please.", audioSrc: "/tea_please.mp3" },
-  { challengeId: 6, correct: false, text: "Goodbye.", audioSrc: "/goodbye.mp3" },
+        // Challenge 6: DIALOGUE
+        { challengeId: 6, correct: false, text: "Tea or water?", audioSrc: "/tea_or_water.mp3" },
+        { challengeId: 6, correct: true, text: "Tea, please.", audioSrc: "/tea_please.mp3" },
+        { challengeId: 6, correct: false, text: "Goodbye.", audioSrc: "/goodbye.mp3" },
 
-  // Challenge 7: SELECT - "nước"
-  { challengeId: 7, imageSrc: "/images/water.png", correct: true, text: "water", audioSrc: "/water.mp3" },
-  { challengeId: 7, imageSrc: "/images/juice.png", correct: false, text: "juice", audioSrc: "/juice.mp3" },
-  { challengeId: 7, imageSrc: "/images/sugar.png", correct: false, text: "sugar", audioSrc: "/sugar.mp3" },
+        // Challenge 7: SELECT - "nước"
+        { challengeId: 7, imageSrc: "/images/water.png", correct: true, text: "water", audioSrc: "/water.mp3" },
+        { challengeId: 7, imageSrc: "/images/juice.png", correct: false, text: "juice", audioSrc: "/juice.mp3" },
+        { challengeId: 7, imageSrc: "/images/sugar.png", correct: false, text: "sugar", audioSrc: "/sugar.mp3" },
 
-  // Challenge 8: ASSIST - "Nước ép"
-  { challengeId: 8, correct: true, text: "juice", audioSrc: "/juice.mp3" },
-  { challengeId: 8, correct: false, text: "milk", audioSrc: "/milk.mp3" },
-  { challengeId: 8, correct: false, text: "hot chocolate", audioSrc: "/hot_chocolate.mp3" },
+        // Challenge 8: ASSIST - "Nước ép"
+        { challengeId: 8, correct: true, text: "juice", audioSrc: "/juice.mp3" },
+        { challengeId: 8, correct: false, text: "milk", audioSrc: "/milk.mp3" },
+        { challengeId: 8, correct: false, text: "hot chocolate", audioSrc: "/hot_chocolate.mp3" },
 
-  // Challenge 9: TRANSLATION - "Vui lòng cho tôi cà phê!"
-  { challengeId: 9, correct: true, text: "coffee please" },
+        // Challenge 9: TRANSLATION - "Vui lòng cho tôi cà phê!"
+        { challengeId: 9, correct: true, text: "coffee please" },
 
-  // Challenge 10: AUDIO_TRANSCRIPTION
-  { challengeId: 10, correct: true, text: "Lemonade", audioSrc: "/lemonade_with_no_sugar.mp3" },
-  { challengeId: 10, correct: true, text: "with", audioSrc: "/lemonade_with_no_sugar.mp3" },
-  { challengeId: 10, correct: true, text: "no", audioSrc: "/lemonade_with_no_sugar.mp3" },
-  { challengeId: 10, correct: true, text: "sugar", audioSrc: "/lemonade_with_no_sugar.mp3" },
-  { challengeId: 10, correct: false, text: "water" },
-  { challengeId: 10, correct: false, text: "juice" },
+        // Challenge 10: AUDIO_TRANSCRIPTION
+        { challengeId: 10, correct: true, text: "Lemonade", audioSrc: "/lemonade_with_no_sugar.mp3" },
+        { challengeId: 10, correct: true, text: "with", audioSrc: "/lemonade_with_no_sugar.mp3" },
+        { challengeId: 10, correct: true, text: "no", audioSrc: "/lemonade_with_no_sugar.mp3" },
+        { challengeId: 10, correct: true, text: "sugar", audioSrc: "/lemonade_with_no_sugar.mp3" },
+        { challengeId: 10, correct: false, text: "water" },
+        { challengeId: 10, correct: false, text: "juice" },
 
-  // Challenge 11: SELECT - "nước chanh"
-  { challengeId: 11, imageSrc: "/images/lemonade.png", correct: true, text: "lemonade", audioSrc: "/lemonade.mp3" },
-  { challengeId: 11, imageSrc: "/images/juice.png", correct: false, text: "juice", audioSrc: "/juice.mp3" },
-  { challengeId: 11, imageSrc: "/images/water.png", correct: false, text: "water", audioSrc: "/water.mp3" },
+        // Challenge 11: SELECT - "nước chanh"
+        { challengeId: 11, imageSrc: "/images/lemonade.png", correct: true, text: "lemonade", audioSrc: "/lemonade.mp3" },
+        { challengeId: 11, imageSrc: "/images/juice.png", correct: false, text: "juice", audioSrc: "/juice.mp3" },
+        { challengeId: 11, imageSrc: "/images/water.png", correct: false, text: "water", audioSrc: "/water.mp3" },
 
-  // Challenge 12: ASSIST - "Đường"
-  { challengeId: 12, correct: true, text: "sugar", audioSrc: "/sugar.mp3" },
-  { challengeId: 12, correct: false, text: "milk", audioSrc: "/milk.mp3" },
-  { challengeId: 12, correct: false, text: "juice", audioSrc: "/juice.mp3" },
+        // Challenge 12: ASSIST - "Đường"
+        { challengeId: 12, correct: true, text: "sugar", audioSrc: "/sugar.mp3" },
+        { challengeId: 12, correct: false, text: "milk", audioSrc: "/milk.mp3" },
+        { challengeId: 12, correct: false, text: "juice", audioSrc: "/juice.mp3" },
 
-  // Challenge 13: TRANSLATION - "Tôi thích nước cam"
-  { challengeId: 13, correct: true, text: "I like orange juice" },
+        // Challenge 13: TRANSLATION - "Tôi thích nước cam"
+        { challengeId: 13, correct: true, text: "I like orange juice" },
 
-  // Challenge 14: AUDIO_TRANSCRIPTION
-  { challengeId: 14, correct: true, text: "milk", audioSrc: "/milk_or_sugar.mp3" },
-  { challengeId: 14, correct: true, text: "or", audioSrc: "/milk_or_sugar.mp3" },
-  { challengeId: 14, correct: true, text: "sugar", audioSrc: "/milk_or_sugar.mp3" },
-  { challengeId: 14, correct: false, text: "tea" },
-  { challengeId: 14, correct: false, text: "with" },
+        // Challenge 14: AUDIO_TRANSCRIPTION
+        { challengeId: 14, correct: true, text: "milk", audioSrc: "/milk_or_sugar.mp3" },
+        { challengeId: 14, correct: true, text: "or", audioSrc: "/milk_or_sugar.mp3" },
+        { challengeId: 14, correct: true, text: "sugar", audioSrc: "/milk_or_sugar.mp3" },
+        { challengeId: 14, correct: false, text: "tea" },
+        { challengeId: 14, correct: false, text: "with" },
 
-  // Challenge 15: MATCH
-  { challengeId: 15, correct: false, text: "sữa", matchId: 1 },
-  { challengeId: 15, correct: false, text: "nước ép", matchId: 2 },
-  { challengeId: 15, correct: false, text: "cảm ơn", matchId: 3 },
-  { challengeId: 15, correct: false, text: "đường", matchId: 4 },
-  { challengeId: 15, correct: true, text: "milk", audioSrc: "/milk.mp3", matchId: 1 },
-  { challengeId: 15, correct: true, text: "juice", audioSrc: "/juice.mp3", matchId: 2 },
-  { challengeId: 15, correct: true, text: "thank you", audioSrc: "/thank_you.mp3", matchId: 3 },
-  { challengeId: 15, correct: true, text: "sugar", audioSrc: "/sugar.mp3", matchId: 4 },
+        // Challenge 15: MATCH
+        { challengeId: 15, correct: false, text: "sữa", matchId: 1 },
+        { challengeId: 15, correct: false, text: "nước ép", matchId: 2 },
+        { challengeId: 15, correct: false, text: "cảm ơn", matchId: 3 },
+        { challengeId: 15, correct: false, text: "đường", matchId: 4 },
+        { challengeId: 15, correct: true, text: "milk", audioSrc: "/milk.mp3", matchId: 1 },
+        { challengeId: 15, correct: true, text: "juice", audioSrc: "/juice.mp3", matchId: 2 },
+        { challengeId: 15, correct: true, text: "thank you", audioSrc: "/thank_you.mp3", matchId: 3 },
+        { challengeId: 15, correct: true, text: "sugar", audioSrc: "/sugar.mp3", matchId: 4 },
 
-  // Challenge 16: DIALOGUE
-  { challengeId: 16, correct: false, text: "How about orange juice?", audioSrc: "/how_about_orange_juice.mp3" },
-  { challengeId: 16, correct: true, text: "Yes, orange juice is great.", audioSrc: "/yes_orange_juice_is_great.mp3" },
-  { challengeId: 16, correct: false, text: "I like apples.", audioSrc: "/i_like_apples.mp3" },
+        // Challenge 16: DIALOGUE
+        { challengeId: 16, correct: false, text: "How about orange juice?", audioSrc: "/how_about_orange_juice.mp3" },
+        { challengeId: 16, correct: true, text: "Yes, orange juice is great.", audioSrc: "/yes_orange_juice_is_great.mp3" },
+        { challengeId: 16, correct: false, text: "I like apples.", audioSrc: "/i_like_apples.mp3" },
 
-  // Challenge 17: SELECT - "Pháp"
-  { challengeId: 17, imageSrc: "/images/france.png", correct: true, text: "France", audioSrc: "/france.mp3" },
-  { challengeId: 17, imageSrc: "/images/mexico.png", correct: false, text: "Mexico", audioSrc: "/mexico.mp3" },
-  { challengeId: 17, imageSrc: "/images/japan.png", correct: false, text: "Japan", audioSrc: "/japan.mp3" },
+        // Challenge 17: SELECT - "Pháp"
+        { challengeId: 17, imageSrc: "/images/france.png", correct: true, text: "France", audioSrc: "/france.mp3" },
+        { challengeId: 17, imageSrc: "/images/mexico.png", correct: false, text: "Mexico", audioSrc: "/mexico.mp3" },
+        { challengeId: 17, imageSrc: "/images/japan.png", correct: false, text: "Japan", audioSrc: "/japan.mp3" },
 
-  // Challenge 18: ASSIST - "Nhật Bản"
-  { challengeId: 18, correct: false, text: "France", audioSrc: "/france.mp3" },
-  { challengeId: 18, correct: true, text: "Japan", audioSrc: "/japan.mp3" },
-  { challengeId: 18, correct: false, text: "Mexico", audioSrc: "/mexico.mp3" },
-]);
-
+        // Challenge 18: ASSIST - "Nhật Bản"
+        { challengeId: 18, correct: false, text: "France", audioSrc: "/france.mp3" },
+        { challengeId: 18, correct: true, text: "Japan", audioSrc: "/japan.mp3" },
+        { challengeId: 18, correct: false, text: "Mexico", audioSrc: "/mexico.mp3" },
+    ]);
 
         console.log("Seeding finished");
     } catch (error) {

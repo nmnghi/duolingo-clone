@@ -74,7 +74,7 @@ export const TranslationChallenge = ({
                     />
                 </div>
                 {/* Vietnamese Text to Translate */}
-                <div className="bg-neutral-100 rounded-lg p-4 border-2 border-neutral-200">
+                <div className="bg-white rounded-lg p-4 border-2 border-neutral-200">
                     <p className="text-lg font-semibold text-neutral-800 text-center">
                         {question}
                     </p>

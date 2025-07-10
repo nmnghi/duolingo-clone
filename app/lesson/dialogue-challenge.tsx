@@ -126,7 +126,7 @@ export const DialogueChallenge = ({
                                         "before:absolute before:top-0 before:-right-2 before:w-0 before:h-0",
                                         status === "correct" ? "bg-green-100 border-2 border-green-200 before:border-t-green-100" :
                                         status === "wrong" ? "bg-red-100 border-2 border-red-200 before:border-t-red-100" :
-                                        "bg-gray-100 border-2 border-gray-200 before:border-t-gray-100",
+                                        "bg-white text-black border-slate-200 border-2 border-b-1 active:border-b-2 hover:bg-slate-100 hover:text-slate-500",
                                         "before:border-l-[8px] before:border-l-transparent"
                                     )}
                                 >
