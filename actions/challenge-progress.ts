@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 
 export const upsertChallengeProgress = async (challengeId: number) => {
     const { userId } = await auth();
-    
+
     if (!userId) {
         throw new Error("Unauthorized");
     }
@@ -42,22 +42,25 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     const isPractice = !!existingChallengeProgress;
 
     if (
-        currentUserProgress.hearts === 0 && 
+        currentUserProgress.hearts === 0 &&
         !isPractice &&
         !userSubscription?.isActive
-        ) {
+    ) {
         return { error: "hearts" };
     }
 
     if (isPractice) {
         await db.update(challengeProgress).set({
             completed: true,
+            completedAt: new Date()
         }).where(eq(challengeProgress.id, existingChallengeProgress.id));
 
         await db.update(userProgress).set({
             hearts: Math.min(currentUserProgress.hearts + 1, 5),
             points: currentUserProgress.points + 10,
         }).where(eq(userProgress.userId, userId));
+
+        // await updateStreak();
 
         revalidatePath("/learn", "page");
         revalidatePath("/lesson", "page");
@@ -72,11 +75,14 @@ export const upsertChallengeProgress = async (challengeId: number) => {
         challengeId,
         userId,
         completed: true,
+        completedAt: new Date()
     });
 
     await db.update(userProgress).set({
         points: currentUserProgress.points + 10,
     }).where(eq(userProgress.userId, userId));
+
+    // await updateStreak();
 
     revalidatePath("/learn");
     revalidatePath("/lesson");

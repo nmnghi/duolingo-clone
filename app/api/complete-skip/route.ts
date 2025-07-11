@@ -38,11 +38,11 @@ export async function POST(req: Request) {
   // 3. Lấy challenges trong unit trước
   const previousChallengeIds = previousUnit
     ? (
-        await db.query.lessons.findMany({
-          where: eq(lessons.unitId, previousUnit.id),
-          with: { challenges: true },
-        })
-      ).flatMap((lesson) => lesson.challenges.map((c) => c.id))
+      await db.query.lessons.findMany({
+        where: eq(lessons.unitId, previousUnit.id),
+        with: { challenges: true },
+      })
+    ).flatMap((lesson) => lesson.challenges.map((c) => c.id))
     : [];
 
   // 4. Lấy challenges trong bài skip (nếu có) trong current unit

@@ -20,6 +20,7 @@ import { Footer } from "./footer";
 import { Challenge } from "./challenge";
 import { ResultCard } from "./result-card";
 import { QuestionBubble } from "./question-bubble";
+import { useAuth } from '@clerk/nextjs'
 
 type Props = {
   initialHearts: number;
@@ -53,6 +54,18 @@ export const Quiz = ({
       openPracticeModal();
     }
   });
+
+  const { getToken } = useAuth();
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const fetchToken = await getToken();
+      setToken(fetchToken);
+    };
+
+    fetchToken();
+  }, []);
 
   const { width, height } = useWindowSize();
   const router = useRouter();
@@ -239,7 +252,25 @@ export const Quiz = ({
         <Footer
           lessonId={lessonId}
           status="completed"
-          onCheck={() => router.push("/learn")}
+          onCheck={async () => {
+            // router.push("/learn");          
+            console.log(token);
+
+            try {
+              await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/streaks`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({}),
+              });
+
+              router.push("/learn");
+            } catch (error) {
+              console.error("Failed to update streak:", error);
+            }
+          }}
         />
       </>
     );
@@ -249,14 +280,14 @@ export const Quiz = ({
     challenge.type === "ASSIST"
       ? "Chọn đáp án đúng nhất"
       : challenge.type === "MATCH"
-      ? "Ghép từ với nghĩa của nó"
-      : challenge.type === "AUDIO_TRANSCRIPTION"
-      ? "Nhấn vào những gì bạn nghe được"
-      : challenge.type === "DIALOGUE"
-      ? "Hoàn thành hội thoại"
-      : challenge.type === "TRANSLATION"
-      ? "Viết lại bằng tiếng Anh"
-      : challenge.question;
+        ? "Ghép từ với nghĩa của nó"
+        : challenge.type === "AUDIO_TRANSCRIPTION"
+          ? "Nhấn vào những gì bạn nghe được"
+          : challenge.type === "DIALOGUE"
+            ? "Hoàn thành hội thoại"
+            : challenge.type === "TRANSLATION"
+              ? "Viết lại bằng tiếng Anh"
+              : challenge.question;
 
   return (
     <>

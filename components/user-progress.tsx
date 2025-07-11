@@ -8,10 +8,15 @@ type Props = {
     activeCourse: typeof courses.$inferSelect;
     hearts: number;
     points: number;
+    streaks: number;
+    lastActive: Date | null;
     hasActiveSubscription: boolean;
 }
 
-export const UserProgress = ({ activeCourse, points, hearts, hasActiveSubscription }: Props) => {
+export const UserProgress = ({ activeCourse, points, hearts, streaks, lastActive, hasActiveSubscription }: Props) => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
     return (
         <div className="flex items-center justify-between gap-x-2 w-full">
             <Link href="/courses">
@@ -51,6 +56,27 @@ export const UserProgress = ({ activeCourse, points, hearts, hasActiveSubscripti
                         : hearts}
                 </Button>
             </Link>
+            {(today.getTime() === lastActive?.getTime())
+                ?
+                <Image
+                    src="/streakActive.png"
+                    alt="Streak"
+                    className="mr-2"
+                    width={22}
+                    height={22}
+                />
+                :
+                <Image
+                    src="/streakInActive.png"
+                    alt="Streak"
+                    className="mr-2"
+                    width={22}
+                    height={22}
+                />
+            }
+            {hasActiveSubscription
+                ? <InfinityIcon className="w-4 h-4 stroke-[3]" />
+                : streaks}
         </div>
     )
 }

@@ -46,12 +46,14 @@ export default async function LearnPage() {
           activeCourse={userProgress.activeCourse}
           hearts={userProgress.hearts}
           points={userProgress.points}
+          streaks={userProgress.streak}
+          lastActive={userProgress.lastActive}
           hasActiveSubscription={!!userSubscription?.isActive}
         />
         {!isPro && (
           <Promo />
-          )}
-        <Quests points = {userProgress.points}/>
+        )}
+        <Quests points={userProgress.points} />
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
