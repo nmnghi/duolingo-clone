@@ -105,17 +105,30 @@ export const AudioTranscriptionChallenge = ({
     if (disabled) return;
 
     // Add the word to the user's answer
-    setUserAnswer([...userAnswer, option.id]);
+    const newUserAnswer = [...userAnswer, option.id];
+    setUserAnswer(newUserAnswer);
 
     // Remove the word from available options
     setAvailableOptions(availableOptions.filter(o => o.id !== option.id));
 
     // Check if this completes the answer
-    const isComplete = userAnswer.length + 1 === options.filter(o => o.correct).length;
+    const correctOptions = options.filter(o => o.correct);
+    const isComplete = newUserAnswer.length === correctOptions.length;
 
     if (isComplete) {
-      // Set the first option's ID as the selectedOption to signal completion
-      onSelect(options[0].id);
+      // For audio transcription, the correct sequence should be based on the original order
+      // of correct options as they appear in the database (sorted by id)
+      const correctSequence = correctOptions
+        .sort((a, b) => a.id - b.id)
+        .map(o => o.id);
+      
+      const isCorrectSequence = newUserAnswer.every((id, index) => id === correctSequence[index]);
+      
+      if (isCorrectSequence) {
+        onSelect(options[0].id);
+      } else {
+        onSelect(options[1]?.id || option.id);
+      }
     }
   };
 

@@ -23,6 +23,9 @@ type Props = {
       skip: boolean;
     })[];
   })[]; 
+  hearts: number;
+  hasActiveSubscription: boolean;
+  lastHeartLoss?: Date | null;
 };
 
 export const Unit = ({
@@ -33,7 +36,10 @@ export const Unit = ({
   lessons,
   activeLesson,
   activeLessonPercentage,
-  allUnits
+  allUnits,
+  hearts,
+  hasActiveSubscription,
+  lastHeartLoss,
 }: Props) => {
     
   const allPreviousUnitsCompleted = allUnits
@@ -68,6 +74,9 @@ export const Unit = ({
             locked={false}
             skip={true}
             percentage={activeLessonPercentage} //ĐỂ XEM SAU VÌ KHI OUT THÌ SET LẠI 0% CHỨ KHÔNG LƯU PROGRESS
+            hearts={hearts}
+            hasActiveSubscription={hasActiveSubscription}
+            lastHeartLoss={lastHeartLoss}
           />
         )}
 
@@ -86,6 +95,9 @@ export const Unit = ({
               locked={isLocked}
               skip={false}
               percentage={activeLessonPercentage}
+              hearts={hearts}
+              hasActiveSubscription={hasActiveSubscription}
+              lastHeartLoss={lastHeartLoss}
             />
           );
         })}

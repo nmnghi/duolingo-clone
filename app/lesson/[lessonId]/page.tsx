@@ -1,9 +1,9 @@
 import { getLesson, getUserProgress, getUserSubscription } from "@/db/queries";
+import { regenerateHearts } from "@/actions/user-progress";
 import { redirect } from "next/navigation";
 import { Quiz } from "../quiz";
 
 import { userSubscription } from "@/db/schema";
-import { completeSkipLesson } from "@/actions/complete-skip";
 
 type Props = {
     params: {
@@ -14,6 +14,12 @@ type Props = {
 const LessonIdPage = async ({
     params
 } : Props) => {
+    try {
+        await regenerateHearts();
+    } catch (error) {
+        console.error("Heart regeneration failed:", error);
+    }
+
     const lessonData = await getLesson(params.lessonId);
     const userProgressData = getUserProgress();
     const userSubscriptionData = getUserSubscription(); // Assuming user subscription is not needed for this page
@@ -35,6 +41,11 @@ const LessonIdPage = async ({
       redirect("/learn");
     }
 
+    // Prevent access if user has no hearts and no active subscription (unless it's a skip lesson)
+    if (!lesson.skip && userProgress.hearts <= 0 && !userSubscription?.isActive) {
+      redirect("/learn");
+    }
+
     const initialPercentage = lesson.challenges
         .filter((challenge) => challenge.completed)
         .length / lesson.challenges.length * 100;
@@ -48,6 +59,7 @@ const LessonIdPage = async ({
             userSubscription={userSubscription}
             isSkipLesson={lesson.skip}
             unitId={lesson.unitId}
+            lastHeartLoss={userProgress.lastHeartLoss}
         />
     );
 }

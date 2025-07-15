@@ -4,12 +4,19 @@ import { Header } from "./header";
 import { Unit } from "./unit";
 import { UserProgress } from "@/components/user-progress";
 import { getUserSubscription, getCourseProgress, getLessonPercentage, getUnits, getUserProgress } from "@/db/queries";
+import { regenerateHearts } from "@/actions/user-progress";
 import { redirect } from "next/navigation";
 import { lessons, units as unitsSchema } from "@/db/schema";
 import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
 
 export default async function LearnPage() {
+  try {
+    await regenerateHearts();
+  } catch (error) {
+    console.error("Heart regeneration failed:", error);
+  }
+
   const userProgressData = getUserProgress();
   const courseProgressData = getCourseProgress();
   const lessonPercentageData = getLessonPercentage();
@@ -47,6 +54,7 @@ export default async function LearnPage() {
           hearts={userProgress.hearts}
           points={userProgress.points}
           hasActiveSubscription={!!userSubscription?.isActive}
+          lastHeartLoss={userProgress.lastHeartLoss}
         />
         {!isPro && (
           <Promo />
@@ -68,6 +76,9 @@ export default async function LearnPage() {
               } | undefined}
               activeLessonPercentage={lessonPercentage}
               allUnits={units}
+              hearts={userProgress.hearts}
+              hasActiveSubscription={!!userSubscription?.isActive}
+              lastHeartLoss={userProgress.lastHeartLoss}
             />
           </div>
         ))}

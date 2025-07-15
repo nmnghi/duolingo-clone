@@ -34,6 +34,7 @@ type Props = {
   } | null;
   isSkipLesson?: boolean;
   unitId: number;
+  lastHeartLoss?: Date | null;
 };
 
 export const Quiz = ({
@@ -44,6 +45,7 @@ export const Quiz = ({
   userSubscription,
   isSkipLesson,
   unitId,
+  lastHeartLoss,
 }: Props) => {
   const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal();
@@ -95,7 +97,7 @@ export const Quiz = ({
       upsertChallengeProgress(challenge.id)
         .then((response) => {
           if (response?.error === "hearts") {
-            openHeartsModal();
+            openHeartsModal(hearts, lastHeartLoss || null, !!userSubscription?.isActive);
             return;
           }
           correctControls.play();
@@ -121,7 +123,7 @@ export const Quiz = ({
       reduceHearts(challenge.id)
         .then((response) => {
           if (response?.error === "hearts") {
-            openHeartsModal();
+            openHeartsModal(hearts, lastHeartLoss || null, !!userSubscription?.isActive);
             return;
           }
           incorrectControls.play();

@@ -17,7 +17,7 @@ import { useHeartsModal } from "@/store/use-hearts-modal";
 
 export const HeartsModal = () => {
     const router = useRouter();
-    const { isOpen, close } = useHeartsModal();
+    const { isOpen, close, hearts, lastHeartLoss, hasActiveSubscription } = useHeartsModal();
     const [isClient, setIsClient] = useState(false);
     
     useEffect(() => setIsClient(true), []);
@@ -27,6 +27,10 @@ export const HeartsModal = () => {
         router.push("/shop");
     }
 
+    const onClose = () => {
+        close();
+    }
+    
     if (!isClient) {
         return null 
     }
@@ -46,8 +50,9 @@ export const HeartsModal = () => {
                     <DialogTitle className="text-center font-bold">
                         You ran out of hearts!
                     </DialogTitle>
-                    <DialogDescription className="text-center">
-                        Get Pro for unlimited hearts, or purchase them in the store.
+                    <DialogDescription className="text-center text-base mb-4">
+                        <p>Hearts regenerate every 20 minutes automatically.</p>
+                        <p>Get Pro for unlimited hearts, or purchase them in the store.</p>
                     </DialogDescription>
                 </DialogHeader> 
                 
@@ -65,7 +70,7 @@ export const HeartsModal = () => {
                             variant="primaryOutline"
                             className="w-full"
                             size="lg"
-                            onClick={close}
+                            onClick={onClose}
                         >
                             No thanks
                         </Button>

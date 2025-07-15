@@ -3,15 +3,17 @@ import { Button } from "@/components/ui/button";
 import { InfinityIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HeartStatus } from "./heart-status";
 
 type Props = {
     activeCourse: typeof courses.$inferSelect;
     hearts: number;
     points: number;
     hasActiveSubscription: boolean;
+    lastHeartLoss?: Date | null;
 }
 
-export const UserProgress = ({ activeCourse, points, hearts, hasActiveSubscription }: Props) => {
+export const UserProgress = ({ activeCourse, points, hearts, hasActiveSubscription, lastHeartLoss }: Props) => {
     return (
         <div className="flex items-center justify-between gap-x-2 w-full">
             <Link href="/courses">
@@ -39,16 +41,11 @@ export const UserProgress = ({ activeCourse, points, hearts, hasActiveSubscripti
             </Link>
             <Link href="/shop">
                 <Button variant="ghost" className="text-rose-500">
-                    <Image
-                        src="/heart.svg"
-                        alt="Hearts"
-                        className="mr-2"
-                        width={22}
-                        height={22}
+                    <HeartStatus 
+                        hearts={hearts}
+                        hasActiveSubscription={hasActiveSubscription}
+                        lastHeartLoss={lastHeartLoss || null}
                     />
-                    {hasActiveSubscription
-                        ? <InfinityIcon className="w-4 h-4 stroke-[3]" />
-                        : hearts}
                 </Button>
             </Link>
         </div>
