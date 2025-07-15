@@ -1,6 +1,6 @@
 import Sidebar from "@/components/sidebar";
 import MobileHeader from "@/components/mobile-header";
-
+import LanguageSwitcherWrapper from "@/components/language-switcher-wrapper";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>

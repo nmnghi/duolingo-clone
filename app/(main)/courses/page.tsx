@@ -1,6 +1,8 @@
 import { getCourses } from "@/db/queries";
 import { getUserProgress } from "@/db/queries";
-import { List } from "./list";
+import ListWrapper from "./list-wrapper";
+import LanguageSwitcherWrapper from "@/components/language-switcher-wrapper";
+import CoursesTitle from "./courses-title";
 
 const CoursesPage = async() => {
    const coursesData = getCourses();
@@ -15,13 +17,14 @@ const CoursesPage = async() => {
    ]);
 
   return (
-    <div className=" h-full max-w-[912px] px-3 mx-auto">
-      <h1 className="text-2xl font-bold text-neutral-700">
-        Language Courses 
-      </h1>
-      <List
-      courses={courses}
-      activeCourseId={userProgress?.activeCourseId}
+    <div className="h-full max-w-[912px] px-3 mx-auto">
+      <div className="flex justify-end py-2">
+        <LanguageSwitcherWrapper />
+      </div>
+      <CoursesTitle />
+      <ListWrapper
+        courses={courses}
+        activeCourseId={userProgress?.activeCourseId}
       />
     </div>
   );
