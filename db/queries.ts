@@ -532,7 +532,7 @@ export const updateStreak = cache(async () => {
 
     if ((today.getTime() - user.lastActive.getTime()) / day > 1) {
         console.log('ngat streak');
-        streak = 0;
+        streak = 1; //trả về 1
         longestStreak = Math.max(streak, user.longestStreak);
 
         await db.update(userProgress).set({
