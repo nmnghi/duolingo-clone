@@ -7,9 +7,10 @@ import { useTranslation } from "@/context/language-context";
 type Props = {
   title: string;
   description: string;
+  part: number; // or string, depending on your data
 };
 
-export const UnitBanner = ({ title, description }: Props) => {
+export const UnitBanner = ({ title, description, part }: Props) => {
   const { t } = useTranslation();
   return (
     <div className="flex w-full items-center justify-between rounded-xl bg-green-500 p-5 text-white">
@@ -17,7 +18,7 @@ export const UnitBanner = ({ title, description }: Props) => {
         <h3 className="text-2xl font-bold">{title}</h3>
         <p className="text-lg">{description}</p>
       </div>
-      <Link href="/learn/guide">
+      <Link href={`/learn/guide/${part}`}>
         <Button
           size="lg"
           variant="secondary"
