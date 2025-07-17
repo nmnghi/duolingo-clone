@@ -24,7 +24,10 @@ export default async function PronounceLayoutPage() {
           activeCourse={userProgress.activeCourse}
           hearts={userProgress.hearts}
           points={userProgress.points}
+          streaks={userProgress.streak}
+          lastActive={userProgress.lastActive}
           hasActiveSubscription={isPro}
+          lastHeartLoss={userProgress.lastHeartLoss}
         />
         {!isPro && <Promo />}
         <Quests points={userProgress.points} />

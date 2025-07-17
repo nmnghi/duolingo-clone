@@ -1,5 +1,4 @@
 'use client'
-import { Button } from "@/components/ui/button";
 // import Image from "next/image";
 import { Noto_Sans } from "next/font/google";
 
@@ -57,32 +56,57 @@ const consonants = [
 
 
 const PronouncePage = () => {
+    let currentAudio: HTMLAudioElement | null = null; // Store outside the component
+
     const onClick = (el: string | undefined, index: number | undefined, type: string) => {
-        let audioPlayer;
+        // 🔇 STOP AND RESET PREVIOUS AUDIO FIRST
+        if (currentAudio && !currentAudio.paused) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        // Stop any ongoing speech
+        window.speechSynthesis.cancel();
+
+        // Get the new audio element
+        let audioPlayer: HTMLAudioElement;
         if (type === "vowel") {
             audioPlayer = document.getElementById(`audioPlayer-vowel-${index}`) as HTMLAudioElement;
         } else {
             audioPlayer = document.getElementById(`audioPlayer-consonant-${index}`) as HTMLAudioElement;
         }
-        if (audioPlayer) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play();
-            setTimeout(() => {
-                const speech = new SpeechSynthesisUtterance(el);
-                window.speechSynthesis.speak(speech);
-            }, 650)
+
+        // Check if we found the audio element
+        if (!audioPlayer) {
+            console.error(`Audio element not found for ${type}-${index}`);
+            return;
         }
 
+        // Update currentAudio reference
+        currentAudio = audioPlayer;
 
+        // Reset and play the new audio
+        audioPlayer.currentTime = 0;
+        audioPlayer.play().catch(error => {
+            console.error('Error playing audio:', error);
+        });
+
+        // Play speech after audio finishes or after delay
+        setTimeout(() => {
+            const speech = new SpeechSynthesisUtterance(el || '');
+            window.speechSynthesis.cancel(); // Extra safety
+            window.speechSynthesis.speak(speech);
+        }, 750);
     };
 
+
     return (
-        
+
         <div className="h-full max-w-[912px] px-3 mx-auto py-8">
-             <div className="text-center mb-8">
+            <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-neutral-700 whitespace-nowrap">Cùng học phát âm tiếng Anh nào!</h1>
                 <p className="text-md text-neutral-500 whitespace-nowrap mt-5">Tập nghe và học phát âm các âm trong tiếng Anh</p>
-             </div>
+            </div>
             <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 border-t border-gray-300 border-[1px]"></div>
                 <h1 className="text-lg font-bold text-neutral-700 whitespace-nowrap">Nguyên âm</h1>
