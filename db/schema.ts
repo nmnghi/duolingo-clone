@@ -124,6 +124,7 @@ export const userProgress = pgTable("user_progress", {
     streak: integer("streak").notNull().default(0),
 
     longestStreak: integer("longest_streak").notNull().default(0),
+    lastHeartLoss: timestamp("last_heart_loss"),
 });
 
 // export const userStreak = pgTable("user_streak", {
