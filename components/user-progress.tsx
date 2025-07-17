@@ -56,27 +56,31 @@ export const UserProgress = ({ activeCourse, points, hearts, streaks, lastActive
                         : hearts}
                 </Button>
             </Link>
-            {(today.getTime() === lastActive?.getTime())
-                ?
-                <Image
-                    src="/streakActive.png"
-                    alt="Streak"
-                    className="mr-2"
-                    width={22}
-                    height={22}
-                />
-                :
-                <Image
-                    src="/streakInActive.png"
-                    alt="Streak"
-                    className="mr-2"
-                    width={22}
-                    height={22}
-                />
-            }
-            {hasActiveSubscription
-                ? <InfinityIcon className="w-4 h-4 stroke-[3]" />
-                : streaks}
+            <div className="flex">
+                <Button variant="ghost" className="text-orange-500">
+                    {(today.getTime() === lastActive?.getTime())
+                        ?
+                        <Image
+                            src="/streakActive.svg"
+                            alt="Streak"
+                            className="mr-3.5"
+                            width={17}
+                            height={17}
+                        />
+                        :
+                        <Image
+                            src="/streakInActive.svg"
+                            alt="Streak"
+                            className="mr-3.5"
+                            width={17}
+                            height={17}
+                        />
+                    }
+                    {hasActiveSubscription
+                        ? <InfinityIcon className="w-4 h-4 stroke-[3]" />
+                        : streaks}
+                </Button>
+            </div>
         </div>
     )
 }
