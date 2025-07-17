@@ -3,12 +3,12 @@
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {auth, currentUser} from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 import { db } from "@/db/drizzle";
 import { getCourseById, getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
-import { POINTS_TO_REFILL } from "@/constants";
+import { POINTS_TO_REFILL, HEART_REGENERATION_TIME_MS, MAX_HEARTS } from "@/constants";
 
 export const upsertUserProgress = async (courseId: number) => {
     const { userId } = await auth();
@@ -36,7 +36,8 @@ export const upsertUserProgress = async (courseId: number) => {
                 activeCourseId: courseId,
                 userName: user.firstName || "User",
                 userImageSrc: user.imageUrl || "/mascot.png",
-            });
+            })
+            .where(eq(userProgress.userId, userId));
 
             revalidatePath("/courses");
             revalidatePath("/learn");
@@ -54,6 +55,47 @@ export const upsertUserProgress = async (courseId: number) => {
     revalidatePath("/courses");
     revalidatePath("/learn");
     redirect("/learn");
+};
+
+export const regenerateHearts = async () => {
+    const { userId } = await auth();
+
+    if (!userId) {
+        throw new Error("Unauthorized");
+    }
+
+    const currentUserProgress = await getUserProgress();
+
+    if (!currentUserProgress) {
+        throw new Error("User progress not found");
+    }
+
+    if (currentUserProgress.hearts >= MAX_HEARTS) {
+        return;
+    }
+
+    if (!currentUserProgress.lastHeartLoss) {
+        return;
+    }
+
+    const timeSinceLastHeartLoss = Date.now() - currentUserProgress.lastHeartLoss.getTime();
+    // Calculate how many hearts should be regenerated based on 20-minute intervals
+    const heartsToRegenerate = Math.floor(timeSinceLastHeartLoss / HEART_REGENERATION_TIME_MS);
+
+    if (heartsToRegenerate > 0) {
+        const newHeartCount = Math.min(currentUserProgress.hearts + heartsToRegenerate, MAX_HEARTS);
+        
+        await db.update(userProgress).set({
+            hearts: newHeartCount,
+            // Clear the lastHeartLoss timestamp only when hearts are fully regenerated
+            lastHeartLoss: newHeartCount >= MAX_HEARTS ? null : currentUserProgress.lastHeartLoss,
+        }).where(eq(userProgress.userId, currentUserProgress.userId));
+
+        revalidatePath("/shop");
+        revalidatePath("/learn");
+        revalidatePath("/quests");
+        revalidatePath("/leaderboard");
+    }
 };
 
 export const reduceHearts = async (challengeId: number) => {
@@ -74,7 +116,7 @@ export const reduceHearts = async (challengeId: number) => {
         throw new Error("Challenge not found");
     }
 
-    const lessonId = challenges.lessonId;
+    const lessonId = challenge.lessonId;
 
     const existingChallengeProgress = await db.query.challengeProgress.findFirst({
         where: and(
@@ -102,6 +144,11 @@ export const reduceHearts = async (challengeId: number) => {
 
     await db.update(userProgress).set({
         hearts: Math.max(currentUserProgress.hearts - 1, 0),
+        // Only set lastHeartLoss if this is the first heart loss (no existing timestamp) 
+        // or if we had full hearts before (meaning hearts were previously regenerated)
+        lastHeartLoss: (!currentUserProgress.lastHeartLoss || currentUserProgress.hearts === MAX_HEARTS) 
+            ? new Date() 
+            : currentUserProgress.lastHeartLoss,
     }).where(eq(userProgress.userId, userId));
 
     revalidatePath("/shop");

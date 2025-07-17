@@ -1,34 +1,28 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 import { db } from "@/db/drizzle";
 import { getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
-import { revalidatePath } from "next/cache";
 
 export const upsertChallengeProgress = async (challengeId: number) => {
     const { userId } = await auth();
-    
+
     if (!userId) {
         throw new Error("Unauthorized");
     }
 
     const currentUserProgress = await getUserProgress();
     const userSubscription = await getUserSubscription();
-
-    if (!currentUserProgress) {
-        throw new Error("User progress not found");
-    }
+    if (!currentUserProgress) throw new Error("User progress not found");
 
     const challenge = await db.query.challenges.findFirst({
-        where: eq(challenges.id, challengeId)
+        where: eq(challenges.id, challengeId),
     });
-
-    if (!challenge) {
-        throw new Error("Challenge not found");
-    }
+    if (!challenge) throw new Error("Challenge not found");
 
     const lessonId = challenge.lessonId;
 
@@ -42,22 +36,37 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     const isPractice = !!existingChallengeProgress;
 
     if (
-        currentUserProgress.hearts === 0 && 
+        currentUserProgress.hearts === 0 &&
         !isPractice &&
         !userSubscription?.isActive
-        ) {
+    ) {
         return { error: "hearts" };
     }
+
+    const allChallenges = await db.query.challenges.findMany({
+        where: eq(challenges.lessonId, lessonId),
+        orderBy: (ch) => ch.order,
+    });
+
+    const isLastChallenge =
+        allChallenges[allChallenges.length - 1]?.id === challengeId;
+
+    const pointsToAdd = isLastChallenge
+        ? isPractice ? 2 : 5
+        : 0;
 
     if (isPractice) {
         await db.update(challengeProgress).set({
             completed: true,
+            completedAt: new Date()
         }).where(eq(challengeProgress.id, existingChallengeProgress.id));
 
         await db.update(userProgress).set({
             hearts: Math.min(currentUserProgress.hearts + 1, 5),
             points: currentUserProgress.points + 10,
         }).where(eq(userProgress.userId, userId));
+
+        // await updateStreak();
 
         revalidatePath("/learn", "page");
         revalidatePath("/lesson", "page");
@@ -72,15 +81,28 @@ export const upsertChallengeProgress = async (challengeId: number) => {
         challengeId,
         userId,
         completed: true,
+        completedAt: new Date()
     });
 
-    await db.update(userProgress).set({
-        points: currentUserProgress.points + 10,
-    }).where(eq(userProgress.userId, userId));
+    const updateData: Record<string, unknown> = {};
+
+    if (isPractice) {
+        updateData.hearts = Math.min(currentUserProgress.hearts + 1, 5);
+    }
+
+    if (pointsToAdd > 0) {
+        updateData.points = sql`${userProgress.points} + ${pointsToAdd}`;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+        await db.update(userProgress)
+            .set(updateData)
+            .where(eq(userProgress.userId, userId));
+    }
 
     revalidatePath("/learn");
     revalidatePath("/lesson");
     revalidatePath("/quests");
     revalidatePath("/leaderboard");
     revalidatePath(`/lesson/${lessonId}`);
-}
+};

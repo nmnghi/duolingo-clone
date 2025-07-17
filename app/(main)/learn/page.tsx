@@ -4,6 +4,7 @@ import { Header } from "./header";
 import { Unit } from "./unit";
 import { UserProgress } from "@/components/user-progress";
 import { getUserSubscription, getCourseProgress, getLessonPercentage, getUnits, getUserProgress } from "@/db/queries";
+import { regenerateHearts } from "@/actions/user-progress";
 import { redirect } from "next/navigation";
 import { lessons, units as unitsSchema } from "@/db/schema";
 import { Promo } from "@/components/promo";
@@ -11,6 +12,12 @@ import { Quests } from "@/components/quests";
 import LanguageSwitcherWrapper from "@/components/language-switcher-wrapper"; // <-- use wrapper
 
 export default async function LearnPage() {
+  try {
+    await regenerateHearts();
+  } catch (error) {
+    console.error("Heart regeneration failed:", error);
+  }
+
   const userProgressData = getUserProgress();
   const courseProgressData = getCourseProgress();
   const lessonPercentageData = getLessonPercentage();
@@ -44,21 +51,23 @@ export default async function LearnPage() {
     <div className="relative">
       <div className="flex flex-row-reverse gap-[48px] px-6">
         <StickyWrapper>
-          {/* Move the language switcher here, align right with a flex row */}
           <div className="flex items-center justify-end w-full mb-4 gap-4">
+            {/* Move the language switcher here, align right with a flex row */}
             <LanguageSwitcherWrapper />
           </div>
           <UserProgress
             activeCourse={userProgress.activeCourse}
             hearts={userProgress.hearts}
             points={userProgress.points}
-            hasActiveSubscription={!!userSubscription?.isActive}
+            streaks={userProgress.streak}
+            lastActive={userProgress.lastActive}
+            hasActiveSubscription={isPro}
+            lastHeartLoss={userProgress.lastHeartLoss}
           />
-          {!isPro && (
-            <Promo />
-          )}
+          {!isPro && <Promo />}
           <Quests points={userProgress.points} />
         </StickyWrapper>
+
         <FeedWrapper>
           <Header title={userProgress.activeCourse.title} />
           {units.map((unit) => (
@@ -74,6 +83,9 @@ export default async function LearnPage() {
                 } | undefined}
                 activeLessonPercentage={lessonPercentage}
                 allUnits={units}
+                hearts={userProgress.hearts}
+                hasActiveSubscription={isPro}
+                lastHeartLoss={userProgress.lastHeartLoss}
               />
             </div>
           ))}

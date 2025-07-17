@@ -3,7 +3,7 @@
 import { cache } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "./drizzle";
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNotNull } from "drizzle-orm";
 import { courses, userProgress, units, challengeProgress, lessons, userSubscription } from "./schema";
 
 export const getUserProgress = cache(async () => {
@@ -12,6 +12,8 @@ export const getUserProgress = cache(async () => {
     if (!userId) {
         return null;
     }
+
+    updateStreak();
 
     const data = await db.query.userProgress.findFirst({
         where: eq(userProgress.userId, userId),
@@ -39,9 +41,9 @@ export const getUnits = cache(async () => { //trả về các unit thuộc khóa
     const { userId } = await auth();
     const userProgress = await getUserProgress();
 
-    if (!userId || !userProgress?.activeCourseId){
+    if (!userId || !userProgress?.activeCourseId) {
         return [];
-}
+    }
     const data = await db.query.units.findMany({
         orderBy: (units, { asc }) => [asc(units.order)],
         where: eq(units.courseId, userProgress.activeCourseId),
@@ -54,7 +56,7 @@ export const getUnits = cache(async () => { //trả về các unit thuộc khóa
                         with: {
                             challengeProgress: {
                                 where: eq(
-                                    challengeProgress.userId, 
+                                    challengeProgress.userId,
                                     userId,
                                 ),
                             }
@@ -74,122 +76,122 @@ export const getUnits = cache(async () => { //trả về các unit thuộc khóa
 
             const allCompletedChallenges = lesson.challenges.every((challenge) => {
                 return challenge.challengeProgress &&
-                challenge.challengeProgress.length > 0 &&
-                challenge.challengeProgress.every((progress) => progress.completed)
+                    challenge.challengeProgress.length > 0 &&
+                    challenge.challengeProgress.every((progress) => progress.completed)
             })
             return { ...lesson, completed: allCompletedChallenges };
         })
         return { ...unit, lessons: lessonWithCompletedStatus };
     })
     return normalizedData;
-// [
-//   {
-//     id: 1,
-//     courseId: 1,
-//     order: 1,
-//     title: "Phần 1",
-//     description: "Mời khách xơi nước",
-//     lessons: [
-//       {
-//         id: 1,
-//         unitId: 1,
-//         order: 1,
-//         title: "Cửa 1",
-//         skip: false,
-//         completed: true,
-//         challenges: [
-//           {
-//             id: 1,
-//             lessonId: 1,
-//             order: 1,
-//             type: "SELECT",
-//             question: 'Đâu là "trà"?',
-//             challengeProgress: [
-//               {
-//                 userId: "user_123",
-//                 challengeId: 1,
-//                 completed: true
-//               }
-//             ]
-//           },
-//           {
-//             id: 2,
-//             lessonId: 1,
-//             order: 2,
-//             type: "ASSIST",
-//             question: '"trà"?',
-//             challengeProgress: [
-//               {
-//                 userId: "user_123",
-//                 challengeId: 2,
-//                 completed: true
-//               }
-//             ]
-//           }
-//         ]
-//       },
-//       {
-//         id: 2,
-//         unitId: 1,
-//         order: 2,
-//         title: "Cửa 2",
-//         skip: false,
-//         completed: false,
-//         challenges: [
-//           {
-//             id: 3,
-//             lessonId: 2,
-//             order: 1,
-//             type: "SELECT",
-//             question: 'Đâu là "sữa"?',
-//             challengeProgress: [] // user chưa làm gì
-//           }
-//         ]
-//       }
-//     ]
-//   },
-//   {
-//     id: 2,
-//     courseId: 1,
-//     order: 2,
-//     title: "Phần 2",
-//     description: "Giới thiệu gốc gác",
-//     lessons: [
-//       {
-//         id: 6,
-//         unitId: 2,
-//         order: 0,
-//         title: "Cửa 0",
-//         skip: true,
-//         completed: false,
-//         challenges: []
-//       },
-//       {
-//         id: 7,
-//         unitId: 2,
-//         order: 1,
-//         title: "Cửa 1",
-//         skip: false,
-//         completed: false,
-//         challenges: [
-//           {
-//             id: 10,
-//             lessonId: 7,
-//             order: 1,
-//             type: "SELECT",
-//             question: "Đâu là 'gốc gác'?",
-//             challengeProgress: []
-//           }
-//         ]
-//       }
-//     ]
-//   }
-// ]
+    // [
+    //   {
+    //     id: 1,
+    //     courseId: 1,
+    //     order: 1,
+    //     title: "Phần 1",
+    //     description: "Mời khách xơi nước",
+    //     lessons: [
+    //       {
+    //         id: 1,
+    //         unitId: 1,
+    //         order: 1,
+    //         title: "Cửa 1",
+    //         skip: false,
+    //         completed: true,
+    //         challenges: [
+    //           {
+    //             id: 1,
+    //             lessonId: 1,
+    //             order: 1,
+    //             type: "SELECT",
+    //             question: 'Đâu là "trà"?',
+    //             challengeProgress: [
+    //               {
+    //                 userId: "user_123",
+    //                 challengeId: 1,
+    //                 completed: true
+    //               }
+    //             ]
+    //           },
+    //           {
+    //             id: 2,
+    //             lessonId: 1,
+    //             order: 2,
+    //             type: "ASSIST",
+    //             question: '"trà"?',
+    //             challengeProgress: [
+    //               {
+    //                 userId: "user_123",
+    //                 challengeId: 2,
+    //                 completed: true
+    //               }
+    //             ]
+    //           }
+    //         ]
+    //       },
+    //       {
+    //         id: 2,
+    //         unitId: 1,
+    //         order: 2,
+    //         title: "Cửa 2",
+    //         skip: false,
+    //         completed: false,
+    //         challenges: [
+    //           {
+    //             id: 3,
+    //             lessonId: 2,
+    //             order: 1,
+    //             type: "SELECT",
+    //             question: 'Đâu là "sữa"?',
+    //             challengeProgress: [] // user chưa làm gì
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     id: 2,
+    //     courseId: 1,
+    //     order: 2,
+    //     title: "Phần 2",
+    //     description: "Giới thiệu gốc gác",
+    //     lessons: [
+    //       {
+    //         id: 6,
+    //         unitId: 2,
+    //         order: 0,
+    //         title: "Cửa 0",
+    //         skip: true,
+    //         completed: false,
+    //         challenges: []
+    //       },
+    //       {
+    //         id: 7,
+    //         unitId: 2,
+    //         order: 1,
+    //         title: "Cửa 1",
+    //         skip: false,
+    //         completed: false,
+    //         challenges: [
+    //           {
+    //             id: 10,
+    //             lessonId: 7,
+    //             order: 1,
+    //             type: "SELECT",
+    //             question: "Đâu là 'gốc gác'?",
+    //             challengeProgress: []
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   }
+    // ]
 
 
 })
 
-export const getCourses = cache(async () => { 
+export const getCourses = cache(async () => {
     const data = await db.query.courses.findMany();
 
     return data;
@@ -204,7 +206,7 @@ export const getCourseById = cache(async (courseId: number) => { //lấy thông 
                 with: {
                     lessons: {
                         orderBy: (lessons, { asc }) => [asc(lessons.order)],
-                                                    
+
                     },
                 },
             },
@@ -359,30 +361,30 @@ export const getLesson = cache(async (id?: number) => { //lấy ra lesson dựa 
     //     unitId: 2,
     //     challenges: [
     //         {
-        //         id: 21,
-        //         type: "SELECT",
-        //         order: 1,
-        //         question: "Chọn từ đúng",
-        //         challengeOptions: [...],
-        //         challengeProgress: [
-        //             {
-        //             userId: "user_123",
-        //             challengeId: 21,
-        //             completed: true
-        //             }
-        //         ],
-        //         completed: true
+    //         id: 21,
+    //         type: "SELECT",
+    //         order: 1,
+    //         question: "Chọn từ đúng",
+    //         challengeOptions: [...],
+    //         challengeProgress: [
+    //             {
+    //             userId: "user_123",
+    //             challengeId: 21,
+    //             completed: true
+    //             }
+    //         ],
+    //         completed: true
     //         },
     //         {
-        //         id: 22,
-        //         type: "ASSIST",
-        //         order: 2,
-        //         question: '"trà"?',
-        //         challengeOptions: [
-        //             ...
-        //         ],
-        //         challengeProgress: [],
-        //         completed: false
+    //         id: 22,
+    //         type: "ASSIST",
+    //         order: 2,
+    //         question: '"trà"?',
+    //         challengeOptions: [
+    //             ...
+    //         ],
+    //         challengeProgress: [],
+    //         completed: false
     //         }
     //     ]
     // }
@@ -434,22 +436,110 @@ export const getUserSubscription = cache(async () => {
 
 });
 
-export const getTopTenUsers = cache (async () => {
-const { userId } = await auth();
+export const getTopTenUsers = cache(async () => {
+    const { userId } = await auth();
 
-if (!userId) {
-    return [];
-}
+    if (!userId) {
+        return [];
+    }
 
-const data = await db.query.userProgress.findMany({
-    orderBy: (userProgress, { desc }) => [desc(userProgress.points)],
-    limit: 10,
-    columns: {
-        userId: true,
-        userName: true,
-        userImageSrc: true,
-        points: true,
+    const data = await db.query.userProgress.findMany({
+        orderBy: (userProgress, { desc }) => [desc(userProgress.points)],
+        limit: 10,
+        columns: {
+            userId: true,
+            userName: true,
+            userImageSrc: true,
+            points: true,
         },
     });
-    return data; 
+    return data;
+});
+
+export const updateStreak = cache(async () => {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return null;
+    }
+
+    const user = await db.query.userProgress.findFirst({
+        where: eq(userProgress.userId, userId),
+    });
+
+    if (!user) {
+        return null;
+    }
+
+    const lastCompleted = await db.query.challengeProgress.findFirst({
+        where: and(
+            eq(challengeProgress.userId, userId),
+            eq(challengeProgress.completed, true),
+            isNotNull(challengeProgress.completedAt)
+        ),
+        orderBy: desc(challengeProgress.completedAt),
+    });
+
+    if (!lastCompleted?.completedAt) {
+        return null;
+    }
+
+    const completedLessonDate = new Date(lastCompleted.completedAt);
+    completedLessonDate.setUTCHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // const yesterday = new Date();
+    // yesterday.setUTCDate(today.getUTCDate() - 1);
+    // yesterday.setUTCHours(0, 0, 0, 0);
+
+    const day = 1000 * 60 * 60 * 24;
+
+    let streak = user.streak;
+    let longestStreak = user.longestStreak;
+
+    if (user.lastActive === null) {
+        await db.update(userProgress).set({
+            streak,
+            longestStreak,
+            lastActive: today,
+        }).where(eq(userProgress.userId, userId));
+        return;
+    }
+
+    // console.log(completedLessonDate);
+    // console.log(user.lastActive);
+    // console.log(today);
+    // console.log(today.getTime());
+    // console.log(user.lastActive.getTime());
+    // console.log((today.getTime() - user.lastActive.getTime()) / day);
+
+    // if (
+    //     completedLessonDate.getTime() === today.getTime() &&
+    //     (today.getTime() - user.lastActive.getTime()) / day <= 1 &&
+    //     user.lastActive.getTime() !== today.getTime()
+    // ) {
+    //     console.log('tang streak');
+
+    //     streak = user.streak + 1;
+    //     longestStreak = Math.max(streak, user.longestStreak);
+    // } else if ((today.getTime() - user.lastActive.getTime()) / day > 1) {
+    //     console.log('ngat streak');
+    //     streak = 0;
+    //     longestStreak = Math.max(streak, user.longestStreak);
+    // }
+
+    if ((today.getTime() - user.lastActive.getTime()) / day > 1) {
+        console.log('ngat streak');
+        streak = 1; //trả về 1
+        longestStreak = Math.max(streak, user.longestStreak);
+
+        await db.update(userProgress).set({
+            streak,
+            longestStreak,
+            lastActive: today,
+        }).where(eq(userProgress.userId, userId));
+    }
+
 });

@@ -98,6 +98,7 @@ export const challengeProgress = pgTable("challenge_progress", {
         onDelete: "cascade"
     }).notNull(),
     completed: boolean("completed").notNull().default(false),
+    completedAt: timestamp("completed_at", { withTimezone: false })
 });
 
 export const challengeProgressRelations = relations(challengeProgress, ({ one }) => ({
@@ -116,7 +117,50 @@ export const userProgress = pgTable("user_progress", {
     }),
     hearts: integer("hearts").notNull().default(5),
     points: integer("points").notNull().default(0),
+    lastActive: timestamp("last_active", { withTimezone: false })
+        .defaultNow()
+    ,
+
+    streak: integer("streak").notNull().default(0),
+
+    longestStreak: integer("longest_streak").notNull().default(0),
+    lastHeartLoss: timestamp("last_heart_loss"),
 });
+
+// export const userStreak = pgTable("user_streak", {
+//     userId: text("user_id")
+//         .primaryKey()
+//         .references(() => userProgress.userId, {
+//             onDelete: "cascade",
+//         }),
+
+//     lastActive: timestamp("last_active", { withTimezone: false })
+//         .defaultNow()
+//         .notNull(),
+
+//     streak: integer("streak").notNull().default(0),
+
+//     longestStreak: integer("longest_streak").notNull().default(0),
+// });
+
+// export const userStreakRelations = relations(userStreak, ({ one }) => ({
+//     user: one(userProgress, {
+//         fields: [userStreak.userId],
+//         references: [userProgress.userId],
+//     }),
+// }));
+
+// export const userProgressRelations = relations(userProgress, ({ one }) => ({
+//     streakData: one(userStreak, {
+//         fields: [userProgress.userId],
+//         references: [userStreak.userId],
+//     }),
+//     activeCourse: one(courses, {
+//         fields: [userProgress.activeCourseId],
+//         references: [courses.id],
+//     }),
+// }));
+
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
     activeCourse: one(courses, {

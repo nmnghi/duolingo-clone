@@ -20,6 +20,7 @@ import { Footer } from "./footer";
 import { Challenge } from "./challenge";
 import { ResultCard } from "./result-card";
 import { QuestionBubble } from "./question-bubble";
+import { useAuth } from '@clerk/nextjs'
 
 type Props = {
   initialHearts: number;
@@ -34,6 +35,7 @@ type Props = {
   } | null;
   isSkipLesson?: boolean;
   unitId: number;
+  lastHeartLoss?: Date | null;
 };
 
 export const Quiz = ({
@@ -44,6 +46,7 @@ export const Quiz = ({
   userSubscription,
   isSkipLesson,
   unitId,
+  lastHeartLoss,
 }: Props) => {
   const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal();
@@ -54,6 +57,18 @@ export const Quiz = ({
     }
   });
 
+  const { getToken } = useAuth();
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const fetchToken = await getToken();
+      setToken(fetchToken);
+    };
+
+    fetchToken();
+  }, []);
+
   const { width, height } = useWindowSize();
   const router = useRouter();
 
@@ -62,6 +77,7 @@ export const Quiz = ({
   const [finishAudio, _f, finishControls] = useAudio({ src: "/finish.mp3" });
   const [correctAudio, _c, correctControls] = useAudio({ src: "/correct.wav" });
   const [incorrectAudio, _i, incorrectControls] = useAudio({ src: "/incorrect.wav" });
+  const [isFirstTimeComplete, setIsFirstTimeComplete] = useState(false);
 
   const [lessonId] = useState(initialLessonId);
   const [hearts, setHearts] = useState(initialHearts);
@@ -94,12 +110,19 @@ export const Quiz = ({
       upsertChallengeProgress(challenge.id)
         .then((response) => {
           if (response?.error === "hearts") {
-            openHeartsModal();
+            openHeartsModal(hearts, lastHeartLoss || null, !!userSubscription?.isActive);
             return;
           }
           correctControls.play();
           setStatus("correct");
-          setPercentage((prev) => prev + 100 / challenges.length);
+          setPercentage((prev) => {
+            const newPercentage = prev + 100 / challenges.length;
+            if (newPercentage >= 100 && initialPercentage < 100) {
+              setIsFirstTimeComplete(true);
+            }
+            return newPercentage;
+          });
+
           if (initialPercentage === 100) {
             setHearts((prev) => Math.min(prev + 1, 5));
           }
@@ -113,7 +136,7 @@ export const Quiz = ({
       reduceHearts(challenge.id)
         .then((response) => {
           if (response?.error === "hearts") {
-            openHeartsModal();
+            openHeartsModal(hearts, lastHeartLoss || null, !!userSubscription?.isActive);
             return;
           }
           incorrectControls.play();
@@ -190,7 +213,7 @@ export const Quiz = ({
     if (!challenge) {
       finishControls.play();
       if (isSkipLesson) {
-        console.log("🚀 Calling complete skip API for unitId:", unitId);
+        console.log("Calling complete skip API for unitId:", unitId);
         handleCompleteSkip();
       }
     }
@@ -232,14 +255,35 @@ export const Quiz = ({
             Great job! <br /> You&apos;ve completed the lesson.
           </h1>
           <div className="flex items-center gap-x-4 w-full">
-            <ResultCard variant="points" value={challenges.length * 10} />
+            <ResultCard
+              variant="points"
+              value={isFirstTimeComplete ? 5 : 2}
+            />
             <ResultCard variant="hearts" value={hearts} />
           </div>
         </div>
         <Footer
           lessonId={lessonId}
           status="completed"
-          onCheck={() => router.push("/learn")}
+          onCheck={async () => {
+            // router.push("/learn");          
+            console.log(token);
+
+            try {
+              await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/streaks`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({}),
+              });
+
+              router.push("/learn");
+            } catch (error) {
+              console.error("Failed to update streak:", error);
+            }
+          }}
         />
       </>
     );
@@ -249,14 +293,14 @@ export const Quiz = ({
     challenge.type === "ASSIST"
       ? "Chọn đáp án đúng nhất"
       : challenge.type === "MATCH"
-      ? "Ghép từ với nghĩa của nó"
-      : challenge.type === "AUDIO_TRANSCRIPTION"
-      ? "Nhấn vào những gì bạn nghe được"
-      : challenge.type === "DIALOGUE"
-      ? "Hoàn thành hội thoại"
-      : challenge.type === "TRANSLATION"
-      ? "Viết lại bằng tiếng Anh"
-      : challenge.question;
+        ? "Ghép từ với nghĩa của nó"
+        : challenge.type === "AUDIO_TRANSCRIPTION"
+          ? "Nhấn vào những gì bạn nghe được"
+          : challenge.type === "DIALOGUE"
+            ? "Hoàn thành hội thoại"
+            : challenge.type === "TRANSLATION"
+              ? "Viết lại bằng tiếng Anh"
+              : challenge.question;
 
   return (
     <>

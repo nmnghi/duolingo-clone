@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { Items } from "./items";
 import { getUserProgress, getUserSubscription } from "@/db/queries";
+import { regenerateHearts } from "@/actions/user-progress";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { UserProgress } from "@/components/user-progress";
 import { StickyWrapper } from "@/components/sticky-wrapper";
@@ -10,6 +11,12 @@ import { Promo } from "@/components/promo";
 import { Quests } from "@/components/quests";
 
 const ShopPage = async () => {
+    try {
+        await regenerateHearts();
+    } catch (error) {
+        console.error("Heart regeneration failed:", error);
+    }
+
     const userProgressData = getUserProgress();
     const userSubscriptionData = getUserSubscription();
 
@@ -35,11 +42,12 @@ const ShopPage = async () => {
                     hearts={userProgress.hearts}
                     points={userProgress.points}
                     hasActiveSubscription={isPro}
+                    lastHeartLoss={userProgress.lastHeartLoss}
                 />
                 {!isPro && (
                           <Promo />
                           )}
-                <Quests points = {userProgress.points}/>
+                <Quests points={userProgress.points} />
                 
             </StickyWrapper>
             <FeedWrapper>
