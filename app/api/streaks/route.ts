@@ -48,6 +48,11 @@ export async function POST(req: NextRequest) {
     const day = 1000 * 60 * 60 * 24;
 
     let streak = user.streak;
+
+    if (streak === null || streak === undefined) {
+        streak = 0;
+    }
+
     let longestStreak = user.longestStreak;
 
     // console.log(completedLessonDate);
@@ -77,7 +82,7 @@ export async function POST(req: NextRequest) {
         longestStreak = Math.max(streak, user.longestStreak);
     } else if ((today.getTime() - user.lastActive.getTime()) / day > 1) {
         console.log('ngat streak');
-        streak = 0;
+        streak = 1; //trả về 1
         longestStreak = Math.max(streak, user.longestStreak);
     }
 
