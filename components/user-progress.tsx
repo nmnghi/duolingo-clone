@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { InfinityIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HeartStatus } from "./heart-status";
 
 type Props = {
     activeCourse: typeof courses.$inferSelect;
@@ -11,9 +12,10 @@ type Props = {
     streaks: number;
     lastActive: Date | null;
     hasActiveSubscription: boolean;
+    lastHeartLoss?: Date | null;
 }
 
-export const UserProgress = ({ activeCourse, points, hearts, streaks, lastActive, hasActiveSubscription }: Props) => {
+export const UserProgress = ({ activeCourse, points, hearts, streaks, lastActive, hasActiveSubscription, lastHeartLoss }: Props) => {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
@@ -44,16 +46,11 @@ export const UserProgress = ({ activeCourse, points, hearts, streaks, lastActive
             </Link>
             <Link href="/shop">
                 <Button variant="ghost" className="text-rose-500">
-                    <Image
-                        src="/heart.svg"
-                        alt="Hearts"
-                        className="mr-2"
-                        width={22}
-                        height={22}
+                    <HeartStatus
+                        hearts={hearts}
+                        hasActiveSubscription={hasActiveSubscription}
+                        lastHeartLoss={lastHeartLoss || null}
                     />
-                    {hasActiveSubscription
-                        ? <InfinityIcon className="w-4 h-4 stroke-[3]" />
-                        : hearts}
                 </Button>
             </Link>
             {(today.getTime() === lastActive?.getTime())

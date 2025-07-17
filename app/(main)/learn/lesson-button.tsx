@@ -6,6 +6,8 @@ import { Check, Crown, Star, Rewind } from "lucide-react";
 import Link from "next/link";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useHeartsProtection } from "@/hooks/use-hearts-protection";
+import { toast } from "sonner";
 
 type Props = {
   id: number;
@@ -15,6 +17,9 @@ type Props = {
   current?: boolean;
   percentage: number;
   skip: boolean;
+  hearts: number;
+  hasActiveSubscription: boolean;
+  lastHeartLoss?: Date | null;
 };
 
 export const LessonButton = ({
@@ -25,6 +30,9 @@ export const LessonButton = ({
   current,
   locked,
   skip,
+  hearts,
+  hasActiveSubscription,
+  lastHeartLoss,
 }: Props) => {
   const cycleLength = 8;
   const cycleIndex = index % cycleLength;
@@ -39,6 +47,8 @@ export const LessonButton = ({
   } else {
     indentationLevel = cycleIndex - 8;
   }
+
+  const { checkHearts } = useHeartsProtection();
 
   const rightPosition = indentationLevel * 40;
   const isFirst = !skip && index === 0;
@@ -55,6 +65,19 @@ export const LessonButton = ({
 
   const href = `/lesson/${id}`;
   const disabled = !skip && locked; // bài skip luôn được mở
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+
+    if (!skip && current && !checkHearts(hearts, hasActiveSubscription, lastHeartLoss)) {
+      e.preventDefault();
+      toast.error("You ran out of hearts! Get more hearts in the shop or wait 20 minutes for them to regenerate.");
+      return;
+    }
+  };
 
   const renderProgressButton = (label: string) => (
     <div className="relative h-[102px] w-[102px]">
@@ -97,6 +120,7 @@ export const LessonButton = ({
       href={href}
       aria-disabled={disabled}
       style={{ pointerEvents: disabled ? "none" : "auto" }}
+      onClick={handleClick}
     >
       <div
         className="relative"

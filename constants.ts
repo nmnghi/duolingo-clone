@@ -1,4 +1,6 @@
 export const POINTS_TO_REFILL = 10;
+export const HEART_REGENERATION_TIME_MS = 20 * 60 * 1000;
+export const MAX_HEARTS = 5;
 
 export const quests = [
     {
