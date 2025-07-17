@@ -55,13 +55,12 @@ export const Unit = ({
     ? lessons.find((lesson) => lesson.skip && !lesson.completed)
     : undefined;
 
-
   const normalLessons = lessons.filter((lesson) => !lesson.skip);
   const totalCount = normalLessons.length - 1;
 
   return (
     <>
-      <UnitBanner title={title} description={description} />
+      <UnitBanner title={title} description={description} part={order} />
       <div className="relative flex flex-col items-center">
         {/* skip */}
         {skipLesson && (
