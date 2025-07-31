@@ -60,19 +60,19 @@ export const Unit = ({
 
   return (
     <>
-      <UnitBanner title={title} description={description} part={order} />
+      <UnitBanner title={title} description={description} guideId={id} />
       <div className="relative flex flex-col items-center">
         {/* skip */}
         {skipLesson && (
           <LessonButton
             key={skipLesson.id}
             id={skipLesson.id}
-            index={-1} // không ảnh hưởng đến logic thứ tự
+            index={-1}
             totalCount={totalCount}
             current={false}
             locked={false}
             skip={true}
-            percentage={activeLessonPercentage} //ĐỂ XEM SAU VÌ KHI OUT THÌ SET LẠI 0% CHỨ KHÔNG LƯU PROGRESS
+            percentage={activeLessonPercentage}
             hearts={hearts}
             hasActiveSubscription={hasActiveSubscription}
             lastHeartLoss={lastHeartLoss}
