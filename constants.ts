@@ -4,26 +4,26 @@ export const MAX_HEARTS = 5;
 
 export const quests = [
     {
-        title: "earn20XP",
+        title: "Earn 20 XP",
         value: 20,
     },
     {
-        title: "earn50XP",
+        title: "Earn 50 XP",
         value: 50,
     },
     
     {
-        title: "earn100XP",
+        title: "Earn 100 XP",
         value: 100,
     },
     
     {
-        title: "earn500XP",
+        title: "Earn 500 XP",
         value: 500,
     },
 
     {
-        title: "earn1000XP",
+        title: "Earn 1000 XP",
         value: 1000,
     },
 ];     
